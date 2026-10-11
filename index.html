@@ -424,7 +424,7 @@ const ROLE = { superadmin: 'Super Admin', admin: 'Admin', kasir: 'Kasir' };
 const CAN = {
   superadmin: ['pos', 'sales', 'report', 'products', 'users', 'settings', 'void', 'cost'],
   admin: ['pos', 'sales', 'report', 'products', 'void', 'cost'],
-  kasir: ['pos', 'sales']
+  kasir: ['pos']
 };
 const can = a => !!(S.me && CAN[S.me.role] && CAN[S.me.role].includes(a));
 const NAV = [['pos', 'Kasir', 'cart'], ['sales', 'Penjualan', 'list'], ['report', 'Laporan', 'chart'], ['products', 'Produk & HPP', 'box'], ['users', 'Pengguna', 'users'], ['settings', 'Pengaturan', 'sliders']];
@@ -595,12 +595,14 @@ function receiptRows(t) {
   const c = cfg(); const r = [{ k: 'logo' }, { k: 'c', t: c.nama, b: 1 }];
   if (c.tagline) r.push({ k: 'c', t: c.tagline });
   if (c.jalan) r.push({ k: 'c', t: c.jalan }); if (c.kota) r.push({ k: 'c', t: c.kota }); if (c.telp) r.push({ k: 'c', t: 'Telp ' + c.telp });
-  r.push({ k: 'hr' }, { k: 't', t: t.no }, { k: 't', t: new Date(t.ts).toLocaleString('id-ID') }, { k: 't', t: 'Kasir: ' + t.kasir }, { k: 'hr' });
+  r.push({ k: 'hr' }, { k: 'c', t: t.bill ? '*** BILL / TAGIHAN ***' : '', b: 1 }, { k: 't', t: t.no }, { k: 't', t: new Date(t.ts).toLocaleString('id-ID') }, { k: 't', t: 'Kasir: ' + t.kasir }, { k: 'hr' });
   t.items.forEach(i => { r.push({ k: 't', t: i.nama }); r.push({ k: 'l', a: '  ' + i.qty + ' x ' + num(i.harga), b: num(i.qty * i.harga) }); });
   r.push({ k: 'hr' }, { k: 'l', a: 'Subtotal', b: num(t.sub) });
   if (t.diskon) r.push({ k: 'l', a: 'Diskon', b: '-' + num(t.diskon) });
   if (t.pajak) r.push({ k: 'l', a: 'Pajak', b: num(t.pajak) });
-  r.push({ k: 'l', a: 'TOTAL', b: num(t.total), bold: 1 }, { k: 'l', a: t.metode, b: num(t.bayar) });
+  r.push({ k: 'l', a: 'TOTAL', b: num(t.total), bold: 1 });
+  if (t.bill) { r.push({ k: 'hr' }, { k: 'c', t: 'Belum dibayar' }, { k: 'c', t: 'Silakan lanjut ke kasir' }); return r.filter(x => !(x.k === 'c' && x.t === '')); }
+  r.push({ k: 'l', a: t.metode, b: num(t.bayar) });
   if (t.metode === 'Tunai') r.push({ k: 'l', a: 'Kembali', b: num(t.kembali) });
   r.push({ k: 'hr' }, { k: 'c', t: c.footer });
   return r;
@@ -644,12 +646,14 @@ function waNumber(v) { let d = String(v || '').replace(/\D/g, ''); if (d.startsW
 function waText(t) {
   const c = cfg(); const L = ['*' + c.nama + '*'];
   if (c.jalan || c.kota) L.push([c.jalan, c.kota].filter(Boolean).join(', '));
-  L.push('', 'No: ' + t.no, new Date(t.ts).toLocaleString('id-ID'), 'Kasir: ' + t.kasir, '');
+  L.push('', t.bill ? '*BILL / TAGIHAN (belum dibayar)*' : '', 'No: ' + t.no, new Date(t.ts).toLocaleString('id-ID'), 'Kasir: ' + t.kasir, '');
   t.items.forEach(i => L.push('• ' + i.qty + ' x ' + i.nama + ' — ' + rp(i.qty * i.harga)));
   L.push('');
   if (t.diskon) L.push('Diskon: -' + rp(t.diskon));
   if (t.pajak) L.push('Pajak: ' + rp(t.pajak));
-  L.push('*Total: ' + rp(t.total) + '*', 'Bayar (' + t.metode + '): ' + rp(t.bayar));
+  L.push('*Total: ' + rp(t.total) + '*');
+  if (t.bill) return L.concat(['', 'Mohon lanjut ke kasir untuk pembayaran.']).join('\n');
+  L.push('Bayar (' + t.metode + '): ' + rp(t.bayar));
   if (t.metode === 'Tunai') L.push('Kembali: ' + rp(t.kembali));
   L.push('', c.footer);
   return L.join('\n');
@@ -830,13 +834,17 @@ async function doSetup(demo) {
     S.busy = ''; render(); toast('Gagal menyimpan data. Periksa aturan keamanan Firestore.', 'err');
   }
 }
+const REMK = 'kasirku_remember', EMK = 'kasirku_email';
+function remChecked() { try { return localStorage.getItem(REMK) !== '0'; } catch (e) { return true; } }
+function savedEmail() { try { return remChecked() ? localStorage.getItem(EMK) || '' : ''; } catch (e) { return ''; } }
 function renderLogin() {
-  const c0 = cfg(); const em = ($('#lg-email') || {}).value || '', pw = ($('#lg-pass') || {}).value || '';
+  const c0 = cfg(); const em = ($('#lg-email') || {}).value || savedEmail(), pw = ($('#lg-pass') || {}).value || '';
   root().innerHTML = `<div class="split">${heroPanel(c0.tagline || 'Selamat datang kembali', [c0.jalan, c0.kota].filter(Boolean).join(', ') || 'Masuk untuk mulai berjualan dan memantau laporan.')}<div class="formside"><div class="card">
     <h1>Masuk ke ${esc(c0.nama)}</h1><p class="muted">Gunakan email dan kata sandi dari Super Admin.</p>
     <form id="lg-form" class="stack" style="margin-top:18px" autocomplete="on">
       <label class="f">Email<input id="lg-email" type="email" inputmode="email" autocomplete="username" value="${esc(em)}"></label>
       <label class="f">Kata sandi<input id="lg-pass" type="password" autocomplete="current-password" value="${esc(pw)}"></label>
+      <label class="chk"><input type="checkbox" id="lg-rem" ${remChecked() ? 'checked' : ''}>Ingat saya di perangkat ini</label>
       <div id="lg-err" class="note" hidden></div>
       <button class="btn primary big" type="submit" id="lg-btn">Masuk</button>
     </form></div></div></div>`;
@@ -845,7 +853,12 @@ async function doLogin() {
   const email = $('#lg-email').value.trim(), pass = $('#lg-pass').value; const err = m => { const e = $('#lg-err'); e.textContent = m; e.hidden = false; };
   if (!email || !pass) return err('Isi email dan kata sandi.');
   const b = $('#lg-btn'); b.disabled = true; b.textContent = 'Memeriksa…';
-  try { await AUTH.signInWithEmailAndPassword(email, pass); }
+  const rem = $('#lg-rem') ? $('#lg-rem').checked : true;
+  try {
+    try { localStorage.setItem(REMK, rem ? '1' : '0'); if (rem) localStorage.setItem(EMK, email); else localStorage.removeItem(EMK); } catch (e) { /* ignore */ }
+    try { await AUTH.setPersistence(rem ? 'local' : 'session'); } catch (e) { /* ignore */ }
+    await AUTH.signInWithEmailAndPassword(email, pass);
+  }
   catch (e) {
     b.disabled = false; b.textContent = 'Masuk';
     const c = e && e.code;
@@ -901,6 +914,7 @@ function posView() {
           <div class="quick" id="quick"></div>
           <div class="chg" id="chg"></div>
         </div>
+        <button class="btn big" id="billBtn" data-act="pos-bill">Cetak Bill (sebelum bayar)</button>
         <button class="btn primary big" id="payBtn" data-act="pos-pay">Bayar</button>
       </div>
     </aside>
@@ -950,6 +964,7 @@ function posSum() {
   const short_ = S.pay.metode === 'Tunai' && t.bayar < t.total;
   $('#chg').innerHTML = S.pay.metode === 'Tunai' && S.pay.bayar !== ''
     ? `<span>${short_ ? 'Kurang' : 'Kembalian'}</span><span class="num ${short_ ? 'dn' : 'up'}">${rp(Math.abs(t.kembali))}</span>` : '';
+  const bb = $('#billBtn'); if (bb) bb.disabled = !S.cart.length;
   const btn = $('#payBtn'); btn.disabled = !S.cart.length || short_;
   btn.textContent = S.cart.length ? 'Bayar ' + rp(t.total) : 'Bayar';
   const qty = S.cart.reduce((a, l) => a + l.qty, 0);
@@ -979,6 +994,15 @@ async function doPay() {
   $('#disc').value = ''; $('#bayar').value = '';
   const pos = $('#pos'); if (pos) pos.classList.remove('open');
   posCart(); posGrid(); showReceipt(trx);
+}
+function showBill() {
+  if (!S.cart.length) return; const t = totals(); const now = Date.now();
+  const items = S.cart.map(l => { const p = S.products[l.pid]; return { pid: p.id, nama: p.nama, qty: l.qty, harga: p.harga, hpp: 0 }; });
+  const b = { bill: 1, id: 'bill', no: 'BILL-' + new Date(now).toTimeString().slice(0, 5).replace(':', ''), ts: now, kasirId: S.me.id, kasir: S.me.nama, items, sub: t.sub, diskon: t.dis, pajak: t.pj, total: t.total, metode: '', bayar: 0, kembali: 0 };
+  S.lastTrx = b;
+  openModal(`<div class="dh"><h2>Bill / tagihan</h2><button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
+    <div class="db"><div class="note info">Ini tagihan untuk pelanggan, belum tercatat sebagai penjualan. Setelah pelanggan bayar, tutup ini lalu tekan Bayar.</div>${receiptHTML(b)}${shareHTML(b)}</div>
+    <div class="df"><button class="btn primary" data-act="close">Kembali ke pesanan</button></div>`);
 }
 function showReceipt(t) {
   S.lastTrx = t;
@@ -1107,8 +1131,8 @@ function delta(cur, prev, label) {
 function tilesHTML(A, extra) {
   return `<div class="tiles">
     <div class="tile"><small>Penjualan bersih</small><b>${rp(A.omzet)}</b>${extra && extra.omzet ? `<div class="d">${extra.omzet}</div>` : ''}</div>
-    <div class="tile"><small>HPP (modal)</small><b>${rp(A.hpp)}</b></div>
-    <div class="tile"><small>Laba kotor</small><b>${rp(A.laba)}</b><div class="d">Margin ${pct(A.margin)}${extra && extra.laba ? ' · ' + extra.laba : ''}</div></div>
+    <div class="tile"><small>HPP (modal)</small><b>${rp(A.hpp)}</b><div class="d">${pct(A.omzet > 0 ? A.hpp / A.omzet * 100 : 0)} dari penjualan</div></div>
+    <div class="tile"><small>Laba kotor</small><b>${rp(A.laba)}</b><div class="d">${pct(A.margin)} dari penjualan${extra && extra.laba ? ' · ' + extra.laba : ''}</div></div>
     <div class="tile"><small>Transaksi</small><b>${num(A.n)}</b><div class="d">Rata-rata ${rp(A.avg)}</div></div>
     <div class="tile"><small>Item terjual</small><b>${num(A.qty)}</b></div></div>`;
 }
@@ -1158,8 +1182,8 @@ function repBulanan() {
   let out = tilesHTML(A, { omzet: delta(A.omzet, P.omzet, pl), laba: delta(A.laba, P.laba, pl) });
   out += `<div class="tiles" style="margin-top:10px"><div class="tile"><small>Hari berjualan</small><b>${active}</b></div><div class="tile"><small>Rata-rata per hari</small><b>${rp(active ? A.omzet / active : 0)}</b></div><div class="tile"><small>Hari terbaik</small><b>${best ? fmtD(best.dk).split(', ')[1] : '-'}</b><div class="d">${best ? rp(best.a.omzet) : ''}</div></div></div>`;
   out += `<div class="sec"><h2>Penjualan per hari</h2>${stackChart(rows, 'Penjualan per hari')}</div>`;
-  const body = rows.map(r => `<tr><td class="nw">${fmtD(r.dk)}</td><td class="r num">${r.a.n}</td><td class="r num">${rp(r.a.omzet)}</td><td class="r num">${rp(r.a.hpp)}</td><td class="r num">${rp(r.a.laba)}</td><td class="r num">${r.a.n ? pct(r.a.margin) : '-'}</td></tr>`);
-  out += `<div class="sec"><h2>Rincian harian</h2>${tbl([['Tanggal'], ['Trx', 'r'], ['Penjualan', 'r'], ['HPP', 'r'], ['Laba', 'r'], ['Margin', 'r']], body, `<tr><td>Total ${fmtM(m)}</td><td class="r num">${A.n}</td><td class="r num">${rp(A.omzet)}</td><td class="r num">${rp(A.hpp)}</td><td class="r num">${rp(A.laba)}</td><td class="r num">${pct(A.margin)}</td></tr>`)}</div>`;
+  const body = rows.map(r => `<tr><td class="nw">${fmtD(r.dk)}</td><td class="r num">${r.a.n}</td><td class="r num">${rp(r.a.omzet)}</td><td class="r num">${rp(r.a.hpp)}</td><td class="r num">${r.a.n ? pct(r.a.hpp / r.a.omzet * 100) : '-'}</td><td class="r num">${rp(r.a.laba)}</td><td class="r num">${r.a.n ? pct(r.a.margin) : '-'}</td></tr>`);
+  out += `<div class="sec"><h2>Rincian harian</h2>${tbl([['Tanggal'], ['Trx', 'r'], ['Penjualan', 'r'], ['HPP', 'r'], ['HPP %', 'r'], ['Laba', 'r'], ['Margin', 'r']], body, `<tr><td>Total ${fmtM(m)}</td><td class="r num">${A.n}</td><td class="r num">${rp(A.omzet)}</td><td class="r num">${rp(A.hpp)}</td><td class="r num">${pct(A.omzet > 0 ? A.hpp / A.omzet * 100 : 0)}</td><td class="r num">${rp(A.laba)}</td><td class="r num">${pct(A.margin)}</td></tr>`)}</div>`;
   S.lastCsv = { name: 'laporan_bulanan_' + m + '.csv', rows: [['Tanggal', 'Transaksi', 'Penjualan bersih', 'HPP', 'Laba kotor', 'Margin %']].concat(rows.map(r => [r.dk, r.a.n, Math.round(r.a.omzet), Math.round(r.a.hpp), Math.round(r.a.laba), r.a.n ? r.a.margin.toFixed(1) : ''])) };
   return out;
 }
@@ -1168,10 +1192,10 @@ function sortItems(list) {
   const k = S.ui.sort; return list.sort((a, b) => k === 'nama' ? a.nama.localeCompare(b.nama) : (b[k] - a[k]));
 }
 function itemTable(list, total) {
-  const rows = list.map(i => `<tr><td>${esc(i.nama)}<span class="sub">${esc(i.kat)}</span></td><td class="r num">${num(i.qty)}</td><td class="r num">${rp(i.net)}</td><td class="r num">${rp(i.cost)}</td><td class="r num">${rp(i.laba)}</td><td class="r num">${pct(i.margin)}</td><td style="min-width:110px"><span class="bar"><i style="width:${total ? i.net / total * 100 : 0}%"></i></span><small>${pct(total ? i.net / total * 100 : 0)}</small></td></tr>`);
+  const rows = list.map(i => `<tr><td>${esc(i.nama)}<span class="sub">${esc(i.kat)}</span></td><td class="r num">${num(i.qty)}</td><td class="r num">${rp(i.net)}</td><td class="r num">${rp(i.cost)}</td><td class="r num">${pct(i.net > 0 ? i.cost / i.net * 100 : 0)}</td><td class="r num">${rp(i.laba)}</td><td class="r num">${pct(i.margin)}</td><td style="min-width:110px"><span class="bar"><i style="width:${total ? i.net / total * 100 : 0}%"></i></span><small>${pct(total ? i.net / total * 100 : 0)}</small></td></tr>`);
   const T = list.reduce((a, i) => { a.qty += i.qty; a.net += i.net; a.cost += i.cost; return a; }, { qty: 0, net: 0, cost: 0 });
-  return tbl([['Item'], ['Qty', 'r'], ['Penjualan', 'r'], ['HPP', 'r'], ['Laba', 'r'], ['Margin', 'r'], ['Kontribusi']], rows,
-    `<tr><td>Total</td><td class="r num">${num(T.qty)}</td><td class="r num">${rp(T.net)}</td><td class="r num">${rp(T.cost)}</td><td class="r num">${rp(T.net - T.cost)}</td><td class="r num">${pct(T.net ? (T.net - T.cost) / T.net * 100 : 0)}</td><td></td></tr>`);
+  return tbl([['Item'], ['Qty', 'r'], ['Penjualan', 'r'], ['HPP', 'r'], ['HPP %', 'r'], ['Laba', 'r'], ['Margin', 'r'], ['Kontribusi']], rows,
+    `<tr><td>Total</td><td class="r num">${num(T.qty)}</td><td class="r num">${rp(T.net)}</td><td class="r num">${rp(T.cost)}</td><td class="r num">${pct(T.net ? T.cost / T.net * 100 : 0)}</td><td class="r num">${rp(T.net - T.cost)}</td><td class="r num">${pct(T.net ? (T.net - T.cost) / T.net * 100 : 0)}</td><td></td></tr>`);
 }
 const sortSel = () => `<label class="f" style="max-width:220px">Urutkan<select id="rsort" data-in="rsort">${SORTS.map(s => `<option value="${s[0]}" ${S.ui.sort === s[0] ? 'selected' : ''}>${s[1]}</option>`).join('')}</select></label>`;
 function repItem() {
@@ -1332,7 +1356,9 @@ function userModal(id) {
     <label class="f">Kata sandi awal<span class="h">Minimal 6 karakter. Beritahukan ke yang bersangkutan.</span><input id="up" type="text" autocomplete="off"></label>`}
     <label class="f">Peran<select id="ur">${Object.keys(ROLE).map(r => `<option value="${r}" ${(u ? u.role : 'kasir') === r ? 'selected' : ''}>${ROLE[r]}</option>`).join('')}</select></label>
     <label class="chk"><input type="checkbox" id="ua" ${!u || u.aktif ? 'checked' : ''}>Akun aktif</label>
-    ${u && u.email ? `<button class="btn sm" data-act="user-reset" data-id="${u.id}" style="justify-self:start">Kirim email atur ulang kata sandi</button>` : ''}</div>
+    ${u && u.email ? `<button class="btn sm" data-act="user-reset" data-id="${u.id}" style="justify-self:start">Kirim email atur ulang kata sandi</button>` : ''}
+    ${u && S.me && u.id === S.me.id ? `<div class="sec" style="margin-top:6px"><h2 style="font-size:15px">Ganti kata sandi saya</h2><label class="f">Kata sandi sekarang<input id="pw0" type="password" autocomplete="current-password"></label><label class="f">Kata sandi baru<span class="h">Minimal 6 karakter.</span><input id="pw1" type="password" autocomplete="new-password"></label><button class="btn sm" data-act="user-pw" style="justify-self:start">Ganti kata sandi</button></div>` : ''}
+    ${u && S.me && u.id !== S.me.id ? `<button class="btn sm danger" data-act="user-del" data-id="${u.id}" style="justify-self:start">${ic('ban')}Hapus akun ini</button>` : ''}</div>
     <div class="df"><button class="btn" data-act="close">Batal</button><button class="btn primary" data-act="user-save" data-id="${u ? u.id : ''}">Simpan</button></div>`);
 }
 async function createAuthUser(email, pass) {
@@ -1351,7 +1377,15 @@ async function saveUser(id) {
       const email = $('#ue').value.trim().toLowerCase(), pass = $('#up').value;
       if (!/^\S+@\S+\.\S+$/.test(email)) return toast('Format email belum benar', 'err');
       if (pass.length < 6) return toast('Kata sandi minimal 6 karakter', 'err');
-      const uidn = await createAuthUser(email, pass);
+      let uidn;
+      try { uidn = await createAuthUser(email, pass); }
+      catch (e2) {
+        if (!(e2 && e2.code === 'auth/email-already-in-use')) throw e2;
+        // email lama (akun yang pernah dihapus dari aplikasi): bisa dipakai lagi bila kata sandinya benar
+        let sec; try { sec = firebase.app('sec'); } catch (e3) { sec = firebase.initializeApp(FB_CONFIG, 'sec'); }
+        try { const cr = await sec.auth().signInWithEmailAndPassword(email, pass); uidn = cr.user.uid; await sec.auth().signOut(); }
+        catch (e4) { return toast('Email itu pernah terdaftar. Pakai email lain, atau isi kata sandi lamanya.', 'err'); }
+      }
       await upsertProfile(uidn, { id: uidn, nama, email, role, aktif });
     }
   } catch (e) {
@@ -1361,7 +1395,34 @@ async function saveUser(id) {
   closeModal(); toast('Pengguna disimpan');
 }
 async function upsertProfile(uid, p) { await DB.doc('profiles/' + uid).set(p); S.users[uid] = p; }
+function delUserAsk(id) {
+  const u = S.users[id]; if (!u || !S.me || id === S.me.id || S.me.role !== 'superadmin') return;
+  openModal(`<div class="dh"><h2>Hapus akun?</h2><button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
+    <div class="db"><p>Akun <b>${esc(u.nama)}</b> (${esc(u.email || '-')}) tidak akan bisa masuk lagi. Riwayat transaksi yang pernah ia input tetap tersimpan di laporan.</p>
+    <div class="note">Email-nya masih tercatat di Firebase. Kalau mau dipakai lagi untuk akun baru, hapus juga di Firebase Console > Authentication > Users.</div></div>
+    <div class="df"><button class="btn" data-act="close">Batal</button><button class="btn danger" data-act="user-del-do" data-id="${id}">Ya, hapus akun</button></div>`);
+}
+async function delUser(id) {
+  const u = S.users[id]; if (!u || !S.me || id === S.me.id || S.me.role !== 'superadmin') return;
+  try { await DB.doc('profiles/' + id).delete(); delete S.users[id]; } catch (e) { return toast('Gagal menghapus akun', 'err'); }
+  closeModal(); toast('Akun dihapus'); refresh();
+}
+async function changeOwnPw() {
+  const p0 = $('#pw0').value, p1 = $('#pw1').value; const u = AUTH && AUTH.currentUser;
+  if (!u || !u.email) return toast('Silakan masuk ulang dulu', 'err');
+  if (!p0) return toast('Isi kata sandi sekarang', 'err');
+  if (p1.length < 6) return toast('Kata sandi baru minimal 6 karakter', 'err');
+  try {
+    await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, p0));
+    await u.updatePassword(p1);
+  } catch (e) {
+    const c = e && e.code;
+    return toast(c === 'auth/wrong-password' || c === 'auth/invalid-credential' ? 'Kata sandi sekarang salah' : c === 'auth/weak-password' ? 'Kata sandi baru terlalu lemah' : 'Gagal mengganti kata sandi', 'err');
+  }
+  closeModal(); toast('Kata sandi diganti');
+}
 async function resetPw(id) {
+  if (!S.me || S.me.role !== 'superadmin') return;
   const u = S.users[id]; if (!u || !u.email) return;
   try { await AUTH.sendPasswordResetEmail(u.email); toast('Email atur ulang dikirim ke ' + u.email); } catch (e) { toast('Gagal mengirim email. Kalau emailnya tidak nyata, buat akun baru dan nonaktifkan yang lama.', 'err'); }
 }
@@ -1432,6 +1493,7 @@ const H = {
   'pos-metode': el => { S.pay.metode = el.dataset.m; posCart(); },
   'pos-quick': el => { S.pay.bayar = el.dataset.v; $('#bayar').value = el.dataset.v; posSum(); },
   'pos-pay': () => doPay(),
+  'pos-bill': () => showBill(),
   'copy-receipt': () => {
     const t = S.rcTrx || S.lastTrx; if (!t) return;
     const text = receiptText(t); const fail = () => toast('Tidak bisa menyalin otomatis dari sini', 'err');
@@ -1495,6 +1557,9 @@ const H = {
   'user-new': () => userModal(''),
   'user-edit': el => userModal(el.dataset.id),
   'user-save': el => saveUser(el.dataset.id),
+  'user-del': el => delUserAsk(el.dataset.id),
+  'user-del-do': el => delUser(el.dataset.id),
+  'user-pw': () => changeOwnPw(),
   'set-save': () => saveSettings(),
   backup: async () => {
     const users = {}; Object.values(S.users).forEach(u => { users[u.id] = { id: u.id, nama: u.nama, role: u.role, aktif: u.aktif }; });
