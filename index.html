@@ -97,7 +97,17 @@ label.f>span.h{font-weight:400;font-size:12px;color:var(--ink-3)}
 .logo{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--accent);color:var(--accent-ink);font:700 20px var(--display)}
 .brand b{display:block;font:700 16px var(--display);line-height:1.15}
 .brand small{font-size:12px}
-.side nav{display:grid;gap:2px}
+.side nav{display:grid;gap:2px;overflow-y:auto;min-height:0}
+.ng{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding:12px 12px 4px}
+.hub{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:18px}
+.hubc{display:grid;gap:3px;text-align:left;padding:14px;border:1px solid var(--line);background:var(--surface);border-radius:14px;transition:transform .15s,box-shadow .15s,border-color .15s}
+.hubc:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--accent)}
+.hubc .hi{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);margin-bottom:6px}
+.hubc b{font:700 15px var(--display)}.hubc small{color:var(--ink-3);font-size:12px;line-height:1.35}
+.kshell{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.kbar{display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.kbar .brand{padding:0}.kbar .sp{flex:1}.kbar .who{line-height:1.2}.kbar .who b{display:block}
+.kshell .cart{max-height:calc(100dvh - 118px)}
 .nav{display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:10px 12px;border-radius:10px;font-weight:600;color:var(--ink-2);text-align:left}
 .nav:hover{background:var(--surface-2)}
 .nav.on{background:var(--accent-soft);color:var(--accent)}
@@ -192,7 +202,9 @@ tr.void td:last-child{text-decoration:none}
 .ch h2{font:700 17px var(--display)}
 .ch .sp{flex:1}
 .only-m{display:none}
-.lines{overflow-y:auto;min-height:90px;padding:6px 16px}
+.lines{overflow-y:auto;flex:1 1 auto;min-height:56px;padding:6px 16px}
+.cart .cf{flex:0 0 auto}
+.payrow{display:grid;grid-template-columns:auto 1fr;gap:8px}
 .ln{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}
 .ln:last-child{border-bottom:0}
 .ln b{font-weight:600;display:block}
@@ -203,6 +215,14 @@ tr.void td:last-child{text-decoration:none}
 .cf{padding:12px 16px 16px;border-top:1px solid var(--line);display:grid;gap:10px;overflow-y:auto}
 .disc{display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:center}
 .disc input{min-height:36px}
+.ord{display:grid;gap:8px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.ord .seg{width:100%}.ord .seg button{flex:1}
+.ord .f select,.ord .f input{min-height:38px}
+.custrow{display:flex;gap:8px}
+.ord .f{grid-template-columns:auto 1fr;align-items:center;gap:10px}
+.ord .f select{width:100%}.custrow .btn:first-child{flex:1;justify-content:flex-start}
+.ptbox{display:grid;gap:6px;padding:10px;border-radius:10px;background:var(--accent-soft,rgba(0,0,0,.04))}
+.btn.cl{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left}
 .sum{display:grid;gap:4px}
 .sum div{display:flex;justify-content:space-between}
 .sum .tot{font:700 22px var(--display);padding-top:6px;border-top:1px solid var(--line);margin-top:4px}
@@ -245,9 +265,12 @@ tr.void td:last-child{text-decoration:none}
 @media (max-width:820px){
   .shell{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
   .side{display:none}
+  .kbar{padding:8px 14px}.kbar .who{display:none}
+  .kbar .brand small{display:none}
   .main{padding:16px 16px 24px}
   .tabbar{display:flex;background:var(--surface);border-top:1px solid var(--line)}
-  .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:transparent;padding:8px 0;font-size:10px;font-weight:600;color:var(--ink-3);min-width:0}
+  .tabbar{overflow-x:auto}
+  .tabbar button{flex:1 0 58px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:transparent;padding:8px 0;font-size:10px;font-weight:600;color:var(--ink-3);min-width:0}
   .tabbar button.on{color:var(--accent)}
   .tabbar button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .ph h1{font-size:22px}
@@ -365,6 +388,10 @@ const ICONS = {
   edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/>',
   ban: '<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>',
   up: '<path d="M6 14l6-6 6 6"/>', down: '<path d="M6 10l6 6 6-6"/>',
+  home: '<path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-6h4v6"/>',
+  calc: '<path d="M19 5L5 19"/><circle cx="7.5" cy="7.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/>',
+  wallet: '<path d="M3 7h16a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7zM3 7l12-3v3M17 14h2"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
   l: '<path d="M15 5l-7 7 7 7"/>', r: '<path d="M9 5l7 7-7 7"/>'
 };
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n] || ''}</svg>`;
@@ -414,25 +441,38 @@ const DL = {
 const TODAY = dKey(Date.now());
 const S = {
   ready: false, busy: '', storage: 'cloud', dl: DL,
-  products: {}, bahan: {}, users: {}, settings: {}, days: {}, all: [], stock: {}, loaded: {},
-  me: null, route: 'pos', authUser: null, own: undefined, ownerExists: undefined, dataReady: false,
-  cart: [], pay: { metode: 'Tunai', diskonT: 'rp', diskonV: '', bayar: '' }, q: '', cat: 'Semua',
-  ui: { rep: 'harian', date: TODAY, month: TODAY.slice(0, 7), sort: 'net', mx: 'qty', sf: TODAY, st: TODAY, sm: 'all', sk: 'all', ss: 'all', sq: '' },
+  products: {}, bahan: {}, users: {}, cust: {}, poin: {}, custErr: false, exp: {}, expErr: false, settings: {}, days: {}, all: [], stock: {}, loaded: {},
+  me: null, route: null, authUser: null, own: undefined, ownerExists: undefined, dataReady: false,
+  cart: [], pay: { metode: 'Tunai', diskonT: 'rp', diskonV: '', bayar: '', tipe: 'Makan di tempat', meja: '', cust: '', pakai: '' }, q: '', cat: 'Semua',
+  ui: { rep: 'harian', date: TODAY, month: TODAY.slice(0, 7), sort: 'net', mx: 'qty', sf: TODAY, st: TODAY, sm: 'all', sk: 'all', ss: 'all', sq: '', sj: 'all', cuq: '', exm: TODAY.slice(0, 7), hs: 'margin' },
   prodTab: 'produk', prodQ: '', img: {}, pv: 'grid', rcTrx: null
 };
 const ROLE = { superadmin: 'Super Admin', admin: 'Admin', kasir: 'Kasir' };
 const CAN = {
-  superadmin: ['pos', 'sales', 'report', 'products', 'users', 'settings', 'void', 'cost'],
-  admin: ['pos', 'sales', 'report', 'products', 'void', 'cost'],
+  superadmin: ['home', 'pos', 'sales', 'report', 'products', 'hpp', 'customers', 'expenses', 'users', 'settings', 'void', 'cost'],
+  admin: ['home', 'pos', 'sales', 'report', 'products', 'hpp', 'customers', 'expenses', 'void', 'cost'],
   kasir: ['pos']
 };
 const can = a => !!(S.me && CAN[S.me.role] && CAN[S.me.role].includes(a));
-const NAV = [['pos', 'Kasir', 'cart'], ['sales', 'Penjualan', 'list'], ['report', 'Laporan', 'chart'], ['products', 'Produk & HPP', 'box'], ['users', 'Pengguna', 'users'], ['settings', 'Pengaturan', 'sliders']];
-const TABL = { products: 'Produk', settings: 'Setelan', users: 'Pengguna' };
+const NAV = [
+  ['home', 'Beranda', 'home', 'Ringkasan hari ini, bulan ini, dan peringatan'],
+  ['pos', 'Kasir (POS)', 'cart', 'Terima pesanan, pilih meja, bayar, cetak struk'],
+  ['sales', 'Penjualan', 'list', 'Semua transaksi, filter, batalkan transaksi'],
+  ['report', 'Laporan', 'chart', 'Harian, bulanan, per item, meja, kasir, pelanggan'],
+  ['customers', 'Pelanggan & Poin', 'star', 'Data pelanggan, riwayat belanja, saldo poin'],
+  ['products', 'Produk & Bahan', 'box', 'Menu, foto, resep, stok, dan bahan baku'],
+  ['hpp', 'HPP & Margin', 'calc', 'Analisis modal, margin, dan saran harga'],
+  ['expenses', 'Pengeluaran & Laba', 'wallet', 'Catat biaya dan lihat laba bersih'],
+  ['users', 'Pengguna', 'users', 'Akun staf, peran, dan hak akses'],
+  ['settings', 'Pengaturan', 'sliders', 'Identitas usaha, meja, poin, struk, data']
+];
+const NAVG = [['Utama', ['home', 'pos']], ['Penjualan', ['sales', 'report', 'customers']], ['Produk', ['products', 'hpp']], ['Keuangan', ['expenses']], ['Sistem', ['users', 'settings']]];
+const TABM = { home: 'Beranda', pos: 'Kasir', sales: 'Penjualan', report: 'Laporan' };
+const landing = () => (can('home') ? 'home' : 'pos');
 const METODE = ['Tunai', 'QRIS', 'Debit', 'Transfer'];
 const cfg = () => {
   const s = S.settings || {};
-  return Object.assign({ nama: 'Kasirku', tagline: '', jalan: '', kota: '', telp: '', pajak: 0, footer: 'Terima kasih, sampai jumpa lagi!', target: 60, aksen: 'biru', kertas: 58 }, s, { jalan: s.jalan != null ? s.jalan : (s.alamat || '') });
+  return Object.assign({ nama: 'Kasirku', tagline: '', jalan: '', kota: '', telp: '', pajak: 0, footer: 'Terima kasih, sampai jumpa lagi!', target: 60, aksen: 'biru', kertas: 58, meja: 'Meja 1, Meja 2, Meja 3, Meja 4, Meja 5, Meja 6, Meja 7, Meja 8, Meja 9, Meja 10', poinPer: 10000, poinNilai: 100 }, s, { jalan: s.jalan != null ? s.jalan : (s.alamat || '') });
 };
 
 /* ---------- business logic ---------- */
@@ -457,6 +497,10 @@ function derive() {
   all.forEach(t => { if (t.void) return; t.items.forEach(i => { const p = S.products[i.pid]; if (p && t.ts > (p.stokAt || 0)) sold[i.pid] = (sold[i.pid] || 0) + i.qty; }); });
   S.stock = {};
   for (const id in S.products) { const p = S.products[id]; if (p.track) S.stock[id] = (+p.stok || 0) - (sold[id] || 0); }
+  const poin = {};
+  all.forEach(t => { if (t.void || !t.pelanggan) return; const id = t.pelanggan.id; poin[id] = (poin[id] || 0) + (t.poinDapat || 0) - (t.poinPakai || 0); });
+  Object.values(S.cust).forEach(c => { poin[c.id] = (poin[c.id] || 0) + (+c.adj || 0); });
+  S.poin = poin;
   S.me = S.authUser && S.own && S.own.aktif ? S.own : null;
 }
 const trxOfDay = dk => Object.values(S.days[dk] || {}).filter(t => t && Array.isArray(t.items));
@@ -485,9 +529,14 @@ function totals() {
   S.cart.forEach(l => { const p = S.products[l.pid]; if (p) sub += p.harga * l.qty; });
   let dis = S.pay.diskonT === 'pct' ? sub * (+S.pay.diskonV || 0) / 100 : (+S.pay.diskonV || 0);
   dis = Math.max(0, Math.min(sub, Math.round(dis)));
-  const dpp = sub - dis, pj = Math.round(dpp * (+c.pajak || 0) / 100), total = dpp + pj;
+  const cu = S.pay.cust && S.cust[S.pay.cust] && !S.cust[S.pay.cust].del ? S.cust[S.pay.cust] : null;
+  const avail = cu ? Math.max(0, S.poin[cu.id] || 0) : 0, nilai = +c.poinNilai || 0;
+  const pakai = cu && nilai > 0 ? Math.max(0, Math.min(Math.floor(+S.pay.pakai || 0), avail, Math.ceil((sub - dis) / nilai))) : 0;
+  const pd = Math.min(sub - dis, pakai * nilai);
+  const dpp = sub - dis - pd, pj = Math.round(dpp * (+c.pajak || 0) / 100), total = dpp + pj;
+  const per = +c.poinPer || 0, dapat = cu && per > 0 ? Math.floor(dpp / per) : 0;
   const bayar = S.pay.metode === 'Tunai' ? (+S.pay.bayar || 0) : total;
-  return { sub, dis, dpp, pj, total, bayar, kembali: bayar - total };
+  return { sub, dis, pd, pakai, dapat, avail, cu, dpp, pj, total, bayar, kembali: bayar - total };
 }
 
 /* ---------- ui primitives ---------- */
@@ -595,15 +644,20 @@ function receiptRows(t) {
   const c = cfg(); const r = [{ k: 'logo' }, { k: 'c', t: c.nama, b: 1 }];
   if (c.tagline) r.push({ k: 'c', t: c.tagline });
   if (c.jalan) r.push({ k: 'c', t: c.jalan }); if (c.kota) r.push({ k: 'c', t: c.kota }); if (c.telp) r.push({ k: 'c', t: 'Telp ' + c.telp });
-  r.push({ k: 'hr' }, { k: 'c', t: t.bill ? '*** BILL / TAGIHAN ***' : '', b: 1 }, { k: 't', t: t.no }, { k: 't', t: new Date(t.ts).toLocaleString('id-ID') }, { k: 't', t: 'Kasir: ' + t.kasir }, { k: 'hr' });
+  r.push({ k: 'hr' }, { k: 'c', t: t.bill ? '*** BILL / TAGIHAN ***' : '', b: 1 }, { k: 't', t: t.no }, { k: 't', t: new Date(t.ts).toLocaleString('id-ID') }, { k: 't', t: 'Kasir: ' + t.kasir });
+  if (t.tipe === 'Bawa pulang') r.push({ k: 't', t: 'Bawa pulang' }); else if (t.meja) r.push({ k: 't', t: 'Meja: ' + t.meja });
+  if (t.pelanggan) r.push({ k: 't', t: 'Pelanggan: ' + t.pelanggan.nama });
+  r.push({ k: 'hr' });
   t.items.forEach(i => { r.push({ k: 't', t: i.nama }); r.push({ k: 'l', a: '  ' + i.qty + ' x ' + num(i.harga), b: num(i.qty * i.harga) }); });
   r.push({ k: 'hr' }, { k: 'l', a: 'Subtotal', b: num(t.sub) });
-  if (t.diskon) r.push({ k: 'l', a: 'Diskon', b: '-' + num(t.diskon) });
+  if (t.diskon - (t.diskonPoin || 0) > 0) r.push({ k: 'l', a: 'Diskon', b: '-' + num(t.diskon - (t.diskonPoin || 0)) });
+  if (t.diskonPoin) r.push({ k: 'l', a: 'Tukar ' + t.poinPakai + ' poin', b: '-' + num(t.diskonPoin) });
   if (t.pajak) r.push({ k: 'l', a: 'Pajak', b: num(t.pajak) });
   r.push({ k: 'l', a: 'TOTAL', b: num(t.total), bold: 1 });
   if (t.bill) { r.push({ k: 'hr' }, { k: 'c', t: 'Belum dibayar' }, { k: 'c', t: 'Silakan lanjut ke kasir' }); return r.filter(x => !(x.k === 'c' && x.t === '')); }
   r.push({ k: 'l', a: t.metode, b: num(t.bayar) });
   if (t.metode === 'Tunai') r.push({ k: 'l', a: 'Kembali', b: num(t.kembali) });
+  if (t.poinDapat) r.push({ k: 'c', t: 'Poin didapat: ' + t.poinDapat });
   r.push({ k: 'hr' }, { k: 'c', t: c.footer });
   return r;
 }
@@ -646,15 +700,20 @@ function waNumber(v) { let d = String(v || '').replace(/\D/g, ''); if (d.startsW
 function waText(t) {
   const c = cfg(); const L = ['*' + c.nama + '*'];
   if (c.jalan || c.kota) L.push([c.jalan, c.kota].filter(Boolean).join(', '));
-  L.push('', t.bill ? '*BILL / TAGIHAN (belum dibayar)*' : '', 'No: ' + t.no, new Date(t.ts).toLocaleString('id-ID'), 'Kasir: ' + t.kasir, '');
+  L.push('', t.bill ? '*BILL / TAGIHAN (belum dibayar)*' : '', 'No: ' + t.no, new Date(t.ts).toLocaleString('id-ID'), 'Kasir: ' + t.kasir);
+  if (t.tipe === 'Bawa pulang') L.push('Bawa pulang'); else if (t.meja) L.push('Meja: ' + t.meja);
+  if (t.pelanggan) L.push('Pelanggan: ' + t.pelanggan.nama);
+  L.push('');
   t.items.forEach(i => L.push('• ' + i.qty + ' x ' + i.nama + ' — ' + rp(i.qty * i.harga)));
   L.push('');
-  if (t.diskon) L.push('Diskon: -' + rp(t.diskon));
+  if (t.diskon - (t.diskonPoin || 0) > 0) L.push('Diskon: -' + rp(t.diskon - (t.diskonPoin || 0)));
+  if (t.diskonPoin) L.push('Tukar ' + t.poinPakai + ' poin: -' + rp(t.diskonPoin));
   if (t.pajak) L.push('Pajak: ' + rp(t.pajak));
   L.push('*Total: ' + rp(t.total) + '*');
   if (t.bill) return L.concat(['', 'Mohon lanjut ke kasir untuk pembayaran.']).join('\n');
   L.push('Bayar (' + t.metode + '): ' + rp(t.bayar));
   if (t.metode === 'Tunai') L.push('Kembali: ' + rp(t.kembali));
+  if (t.poinDapat) L.push('Poin didapat: ' + t.poinDapat);
   L.push('', c.footer);
   return L.join('\n');
 }
@@ -828,7 +887,7 @@ async function doSetup(demo) {
     await DB.doc('master/settings').set(S.settings);
     S.own = prof; S.ownerExists = true; S.users[uid] = prof;
     if (demo) await seedDemo([prof], m => { S.busy = m; const e = $('#busyMsg'); if (e) e.textContent = m; });
-    S.busy = ''; S.route = 'pos'; applyBrand(); checkData(); render();
+    S.busy = ''; S.route = null; applyBrand(); checkData(); render();
     toast('Selesai. Selamat datang, ' + nama);
   } catch (e) {
     S.busy = ''; render(); toast('Gagal menyimpan data. Periksa aturan keamanan Firestore.', 'err');
@@ -865,27 +924,39 @@ async function doLogin() {
     err(c === 'auth/network-request-failed' ? 'Tidak ada koneksi internet. Coba lagi.' : c === 'auth/too-many-requests' ? 'Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.' : c === 'auth/invalid-email' ? 'Format email belum benar.' : 'Email atau kata sandi salah.');
   }
 }
-function logout() { S.cart = []; closeModal(); S.route = 'pos'; if (AUTH) AUTH.signOut(); }
+function logout() { S.cart = []; closeModal(); S.route = null; if (AUTH) AUTH.signOut(); }
 function renderShell() {
-  const items = NAV.filter(n => can(n[0]));
-  if (!can(S.route)) S.route = 'pos';
+  if (!S.route || !can(S.route)) S.route = landing();
   const c = cfg();
+  if (!can('home')) {
+    root().innerHTML = `<div class="kshell"><header class="kbar"><div class="brand">${logoHTML()}<div><b>${esc(c.nama)}</b><small>Panel Kasir</small></div></div><span class="sp"></span>
+      <span class="av">${esc(ini(S.me.nama))}</span><div class="who"><b>${esc(S.me.nama)}</b><small>${ROLE[S.me.role]}</small></div><button class="btn sm" data-act="logout">${ic('logout')}Keluar</button></header>
+      <main class="main" id="view"></main></div>`;
+    renderView(); return;
+  }
+  const nb = n => `<button class="nav ${S.route === n[0] ? 'on' : ''}" data-act="nav" data-r="${n[0]}">${ic(n[2])}<span>${n[1]}</span></button>`;
+  const groups = NAVG.map(g => { const its = g[1].map(i => NAV.find(n => n[0] === i)).filter(n => n && can(n[0])); return its.length ? `<div class="ng">${g[0]}</div>${its.map(nb).join('')}` : ''; }).join('');
+  const tabs = Object.keys(TABM).filter(can).map(k => { const n = NAV.find(x => x[0] === k); return `<button class="${S.route === k ? 'on' : ''}" data-act="nav" data-r="${k}">${ic(n[2])}<span>${TABM[k]}</span></button>`; }).join('');
   root().innerHTML = `<div class="shell">
     <aside class="side"><div class="brand">${logoHTML()}<div><b>${esc(c.nama)}</b><small>${esc(c.kota || 'Kasirku')}</small></div></div>
-      <nav>${items.map(n => `<button class="nav ${S.route === n[0] ? 'on' : ''}" data-act="nav" data-r="${n[0]}">${ic(n[2])}<span>${n[1]}</span></button>`).join('')}</nav>
+      <nav>${groups}</nav>
       <div class="me"><span class="av">${esc(ini(S.me.nama))}</span><div><b>${esc(S.me.nama)}</b><small>${ROLE[S.me.role]}</small></div><button class="icon" data-act="logout" title="Keluar" aria-label="Keluar">${ic('logout')}</button></div>
       <div class="store">Tersimpan di cloud, dibagi ke semua perangkat</div></aside>
     <main class="main" id="view"></main>
-    <nav class="tabbar">${items.map(n => `<button class="${S.route === n[0] ? 'on' : ''}" data-act="nav" data-r="${n[0]}">${ic(n[2])}<span>${TABL[n[0]] || n[1]}</span></button>`).join('')}<button data-act="logout">${ic('logout')}<span>Keluar</span></button></nav>
+    <nav class="tabbar">${tabs}<button data-act="logout">${ic('logout')}<span>Keluar</span></button></nav>
   </div>`;
   renderView();
 }
 function renderView() {
   const v = $('#view'); if (!v) return;
   const r = S.route;
-  v.innerHTML = r === 'pos' ? posView() : r === 'sales' ? salesView() : r === 'report' ? reportView() : r === 'products' ? productsView() : r === 'users' ? usersView() : settingsView();
+  v.innerHTML = r === 'home' ? homeView() : r === 'hpp' ? hppView() : r === 'expenses' ? expensesView() : r === 'pos' ? posView() : r === 'sales' ? salesView() : r === 'report' ? reportView() : r === 'products' ? productsView() : r === 'customers' ? customersView() : r === 'users' ? usersView() : settingsView();
   if (r === 'pos') { posGrid(); posCart(); }
   else if (r === 'sales') salesBody();
+  else if (r === 'customers') custBody();
+  else if (r === 'home') homeBody();
+  else if (r === 'hpp') hppBody();
+  else if (r === 'expenses') expBody();
   else if (r === 'report') repBody();
   else if (r === 'products') prodBody();
 }
@@ -904,6 +975,7 @@ function posView() {
         <button class="icon only-m" data-act="cart-close" aria-label="Tutup">${ic('x')}</button></div>
       <div class="lines" id="lines"></div>
       <div class="cf">
+        <div class="ord" id="ord"></div>
         <div class="disc"><span class="muted">Diskon</span>
           <div class="seg" id="dseg"><button data-act="pos-dt" data-t="rp">Rp</button><button data-act="pos-dt" data-t="pct">%</button></div>
           <input id="disc" type="number" min="0" inputmode="decimal" data-in="disc" placeholder="0" value="${esc(S.pay.diskonV)}" aria-label="Nilai diskon"></div>
@@ -914,8 +986,8 @@ function posView() {
           <div class="quick" id="quick"></div>
           <div class="chg" id="chg"></div>
         </div>
-        <button class="btn big" id="billBtn" data-act="pos-bill">Cetak Bill (sebelum bayar)</button>
-        <button class="btn primary big" id="payBtn" data-act="pos-pay">Bayar</button>
+        <div class="payrow"><button class="btn big" id="billBtn" data-act="pos-bill">Cetak Bill</button>
+        <button class="btn primary big" id="payBtn" data-act="pos-pay">Bayar</button></div>
       </div>
     </aside>
     <button class="fab" id="fab" data-act="cart-open"><span id="fabn"></span><span id="fabt"></span></button>
@@ -945,6 +1017,8 @@ function posCart() {
       <div class="step"><button data-act="pos-dec" data-id="${p.id}" aria-label="Kurangi">${ic('minus')}</button><span>${l.qty}</span><button data-act="pos-inc" data-id="${p.id}" aria-label="Tambah">${ic('plus')}</button></div>
       <b class="num">${rp(p.harga * l.qty)}</b></div>`;
   }).join('') : `<div class="empty" style="margin:10px 0;border:0"><b>Pesanan masih kosong</b>Ketuk menu untuk menambahkan.</div>`;
+  if (S.pay.cust && !(S.cust[S.pay.cust] && !S.cust[S.pay.cust].del)) { S.pay.cust = ''; S.pay.pakai = ''; }
+  const ord = $('#ord'); if (ord && !ord.contains(document.activeElement)) ord.innerHTML = ordHTML();
   const qty = S.cart.reduce((a, l) => a + l.qty, 0);
   $('#cn').textContent = qty ? qty + ' item' : '';
   $('#dseg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.t === S.pay.diskonT));
@@ -956,8 +1030,10 @@ function posSum() {
   const t = totals(); const c = cfg();
   $('#sum').innerHTML = `<div><span class="muted">Subtotal</span><span class="num">${rp(t.sub)}</span></div>
     ${t.dis ? `<div><span class="muted">Diskon</span><span class="num">-${rp(t.dis)}</span></div>` : ''}
+    ${t.pd ? `<div><span class="muted">Tukar ${num(t.pakai)} poin</span><span class="num">-${rp(t.pd)}</span></div>` : ''}
     ${t.pj ? `<div><span class="muted">Pajak ${num(c.pajak)}%</span><span class="num">${rp(t.pj)}</span></div>` : ''}
     <div class="tot"><span>Total</span><span class="num">${rp(t.total)}</span></div>`;
+  ordInfo();
   const sug = new Set([t.total]);
   [5000, 10000, 50000, 100000].forEach(u => sug.add(Math.ceil(t.total / u) * u));
   $('#quick').innerHTML = t.total > 0 ? [...sug].slice(0, 4).map((v, i) => `<button data-act="pos-quick" data-v="${v}">${i === 0 ? 'Uang pas' : rp(v)}</button>`).join('') : '';
@@ -983,22 +1059,30 @@ async function doPay() {
   if (S.pay.metode === 'Tunai' && t.bayar < t.total) return toast('Uang diterima masih kurang', 'err');
   const now = Date.now(), dk = dKey(now), n = Object.keys(S.days[dk] || {}).length + 1;
   const items = S.cart.map(l => { const p = S.products[l.pid]; return { pid: p.id, nama: p.nama, qty: l.qty, harga: p.harga, hpp: Math.round(hppOf(p)) }; });
-  const trx = { id: uid(), no: 'INV-' + dk.slice(2).replace(/-/g, '') + '-' + pad(n, 3), ts: now, kasirId: S.me.id, kasir: S.me.nama, items, sub: t.sub, diskon: t.dis, pajak: t.pj, total: t.total, metode: S.pay.metode, bayar: t.bayar, kembali: Math.max(0, t.kembali) };
+  const trx = { id: uid(), no: 'INV-' + dk.slice(2).replace(/-/g, '') + '-' + pad(n, 3), ts: now, kasirId: S.me.id, kasir: S.me.nama, items, sub: t.sub, diskon: t.dis + t.pd, pajak: t.pj, total: t.total, metode: S.pay.metode, bayar: t.bayar, kembali: Math.max(0, t.kembali) };
+  Object.assign(trx, orderMeta(t));
   $('#payBtn').disabled = true;
   try {
     const w = upsert('sales/' + dk, 'trx', trx.id, trx); w.catch(() => {});
     const r = await Promise.race([w.then(() => 'ok'), sleep(3500).then(() => 'queued')]);
     if (r === 'queued') toast('Transaksi disimpan di perangkat dan akan terkirim saat internet kembali');
   } catch (e) { posSum(); return toast('Transaksi belum tersimpan. Periksa izin akses atau koneksi.', 'err'); }
-  S.cart = []; S.pay.diskonV = ''; S.pay.bayar = '';
+  S.cart = []; S.pay.diskonV = ''; S.pay.bayar = ''; S.pay.meja = ''; S.pay.cust = ''; S.pay.pakai = '';
   $('#disc').value = ''; $('#bayar').value = '';
   const pos = $('#pos'); if (pos) pos.classList.remove('open');
   posCart(); posGrid(); showReceipt(trx);
+}
+function orderMeta(t) {
+  const o = { tipe: S.pay.tipe || TIPE[0] };
+  if (o.tipe !== 'Bawa pulang' && S.pay.meja) o.meja = S.pay.meja;
+  if (t.cu) { o.pelanggan = { id: t.cu.id, nama: t.cu.nama }; o.poinDapat = t.dapat; o.poinPakai = t.pakai; o.diskonPoin = t.pd; }
+  return o;
 }
 function showBill() {
   if (!S.cart.length) return; const t = totals(); const now = Date.now();
   const items = S.cart.map(l => { const p = S.products[l.pid]; return { pid: p.id, nama: p.nama, qty: l.qty, harga: p.harga, hpp: 0 }; });
   const b = { bill: 1, id: 'bill', no: 'BILL-' + new Date(now).toTimeString().slice(0, 5).replace(':', ''), ts: now, kasirId: S.me.id, kasir: S.me.nama, items, sub: t.sub, diskon: t.dis, pajak: t.pj, total: t.total, metode: '', bayar: 0, kembali: 0 };
+  Object.assign(b, orderMeta(t)); b.diskon = t.dis + t.pd;
   S.lastTrx = b;
   openModal(`<div class="dh"><h2>Bill / tagihan</h2><button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
     <div class="db"><div class="note info">Ini tagihan untuk pelanggan, belum tercatat sebagai penjualan. Setelah pelanggan bayar, tutup ini lalu tekan Bayar.</div>${receiptHTML(b)}${shareHTML(b)}</div>
@@ -1035,10 +1119,11 @@ function salesFiltered() {
     if (dk < u.sf || dk > u.st) return false;
     if (!can('cost') && t.kasirId !== S.me.id) return false;
     if (u.sm !== 'all' && t.metode !== u.sm) return false;
+    if (u.sj !== 'all' && (u.sj === 'Bawa pulang' ? t.tipe !== 'Bawa pulang' : (t.tipe === 'Bawa pulang' || (t.meja || '') !== u.sj))) return false;
     if (u.sk !== 'all' && t.kasirId !== u.sk) return false;
     if (u.ss === 'ok' && t.void) return false;
     if (u.ss === 'void' && !t.void) return false;
-    if (q && !(t.no.toLowerCase().includes(q) || (t.kasir || '').toLowerCase().includes(q) || t.items.some(i => i.nama.toLowerCase().includes(q)))) return false;
+    if (q && !(t.no.toLowerCase().includes(q) || (t.kasir || '').toLowerCase().includes(q) || t.items.some(i => i.nama.toLowerCase().includes(q)) || (t.pelanggan && t.pelanggan.nama.toLowerCase().includes(q)))) return false;
     return true;
   });
 }
@@ -1050,9 +1135,10 @@ function salesView() {
       <label class="f">Dari<input type="date" id="sf" data-in="sf" value="${u.sf}"></label>
       <label class="f">Sampai<input type="date" id="st" data-in="st" value="${u.st}"></label>
       <label class="f">Metode<select id="sm" data-in="sm"><option value="all">Semua</option>${METODE.map(m => `<option ${u.sm === m ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+      <label class="f">Meja<select id="sj" data-in="sj"><option value="all">Semua</option><option ${u.sj === 'Bawa pulang' ? 'selected' : ''}>Bawa pulang</option>${mejaList().map(m => `<option ${u.sj === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select></label>
       ${can('cost') ? `<label class="f">Kasir<select id="sk" data-in="sk"><option value="all">Semua</option>${staff.map(s => `<option value="${s.id}" ${u.sk === s.id ? 'selected' : ''}>${esc(s.nama)}</option>`).join('')}</select></label>` : ''}
       <label class="f">Status<select id="ss" data-in="ss"><option value="all">Semua</option><option value="ok" ${u.ss === 'ok' ? 'selected' : ''}>Selesai</option><option value="void" ${u.ss === 'void' ? 'selected' : ''}>Dibatalkan</option></select></label>
-      <label class="f grow">Cari<input type="text" id="sq" data-in="sq" placeholder="No. transaksi, kasir, atau item" value="${esc(u.sq)}" autocomplete="off"></label>
+      <label class="f grow">Cari<input type="text" id="sq" data-in="sq" placeholder="No. transaksi, kasir, pelanggan, atau item" value="${esc(u.sq)}" autocomplete="off"></label>
     </div>
     <div id="salesBody"></div>`;
 }
@@ -1067,21 +1153,21 @@ function salesBody() {
     <div class="tile"><small>Rata-rata per transaksi</small><b>${rp(A.avg)}</b></div></div>`;
   if (!list.length) { el.innerHTML = tiles + empty('Tidak ada transaksi', 'Ubah rentang tanggal atau filter di atas.'); return; }
   const rows = list.slice(0, 300).map(t => `<tr class="clk ${t.void ? 'void' : ''}" data-act="sale-open" data-id="${t.id}" data-d="${dKey(t.ts)}">
-    <td class="nw"><b>${esc(t.no)}</b></td><td class="nw">${dKey(t.ts).slice(5).split('-').reverse().join('/')} ${fmtT(t.ts)}</td><td>${esc(t.kasir)}</td>
+    <td class="nw"><b>${esc(t.no)}</b></td><td class="nw">${dKey(t.ts).slice(5).split('-').reverse().join('/')} ${fmtT(t.ts)}</td><td>${esc(t.kasir)}</td><td class="nw">${esc(t.tipe === 'Bawa pulang' ? 'Bawa pulang' : (t.meja || '-'))}${t.pelanggan ? `<span class="sub">${esc(t.pelanggan.nama)}</span>` : ''}</td>
     <td>${esc(t.items.map(i => i.qty + '× ' + i.nama).join(', '))}</td><td>${esc(t.metode)}</td><td class="r num nw">${rp(t.total)}</td>
     <td>${t.void ? '<span class="tag bad">Batal</span>' : '<span class="tag ok">Selesai</span>'}</td></tr>`);
-  el.innerHTML = tiles + tbl([['No.'], ['Waktu'], ['Kasir'], ['Item'], ['Metode'], ['Total', 'r'], ['Status']], rows)
+  el.innerHTML = tiles + tbl([['No.'], ['Waktu'], ['Kasir'], ['Meja'], ['Item'], ['Metode'], ['Total', 'r'], ['Status']], rows)
     + (list.length > 300 ? `<p class="muted" style="margin-top:8px">Menampilkan 300 transaksi terbaru dari ${num(list.length)}. Persempit rentang tanggal untuk melihat sisanya.</p>` : '');
-  S.lastCsv = { name: 'penjualan_' + S.ui.sf + '_sd_' + S.ui.st + '.csv', rows: [['No', 'Tanggal', 'Jam', 'Kasir', 'Item', 'Metode', 'Subtotal', 'Diskon', 'Pajak', 'Total', 'HPP', 'Status']].concat(list.map(t => [t.no, dKey(t.ts), fmtT(t.ts), t.kasir, t.items.map(i => i.qty + 'x ' + i.nama).join('; '), t.metode, t.sub, t.diskon, t.pajak, t.total, t.items.reduce((a, i) => a + i.qty * i.hpp, 0), t.void ? 'Batal' : 'Selesai'])) };
+  S.lastCsv = { name: 'penjualan_' + S.ui.sf + '_sd_' + S.ui.st + '.csv', rows: [['No', 'Tanggal', 'Jam', 'Kasir', 'Meja', 'Pelanggan', 'Item', 'Metode', 'Subtotal', 'Diskon', 'Pajak', 'Total', 'HPP', 'Poin didapat', 'Poin dipakai', 'Status']].concat(list.map(t => [t.no, dKey(t.ts), fmtT(t.ts), t.kasir, t.tipe === 'Bawa pulang' ? 'Bawa pulang' : (t.meja || ''), t.pelanggan ? t.pelanggan.nama : '', t.items.map(i => i.qty + 'x ' + i.nama).join('; '), t.metode, t.sub, t.diskon, t.pajak, t.total, t.items.reduce((a, i) => a + i.qty * i.hpp, 0), t.poinDapat || 0, t.poinPakai || 0, t.void ? 'Batal' : 'Selesai'])) };
 }
 function saleModal(id, dk, voiding) {
   const t = (S.days[dk] || {})[id]; if (!t) return;
   const cost = can('cost'); const A = agg(t.void ? [] : [t]);
   const rows = t.items.map(i => `<tr><td>${esc(i.nama)}</td><td class="r num">${i.qty}</td><td class="r num">${rp(i.harga)}</td><td class="r num">${rp(i.qty * i.harga)}</td>${cost ? `<td class="r num">${rp(i.qty * i.hpp)}</td>` : ''}</tr>`);
   openModal(`<div class="dh"><h2>${esc(t.no)}</h2>${t.void ? '<span class="tag bad">Batal</span>' : '<span class="tag ok">Selesai</span>'}<button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
-    <div class="db"><div class="muted">${fmtD(dk)} · ${fmtT(t.ts)} · Kasir ${esc(t.kasir)} · ${esc(t.metode)}</div>
+    <div class="db"><div class="muted">${fmtD(dk)} · ${fmtT(t.ts)} · Kasir ${esc(t.kasir)} · ${esc(t.metode)}${t.tipe === 'Bawa pulang' ? ' · Bawa pulang' : t.meja ? ' · Meja ' + esc(t.meja) : ''}${t.pelanggan ? ' · Pelanggan ' + esc(t.pelanggan.nama) : ''}</div>
     ${tbl([['Item'], ['Qty', 'r'], ['Harga', 'r'], ['Subtotal', 'r']].concat(cost ? [['HPP', 'r']] : []), rows)}
-    <div class="sum"><div><span class="muted">Subtotal</span><span class="num">${rp(t.sub)}</span></div>${t.diskon ? `<div><span class="muted">Diskon</span><span class="num">-${rp(t.diskon)}</span></div>` : ''}${t.pajak ? `<div><span class="muted">Pajak</span><span class="num">${rp(t.pajak)}</span></div>` : ''}<div class="tot"><span>Total</span><span class="num">${rp(t.total)}</span></div>
+    <div class="sum"><div><span class="muted">Subtotal</span><span class="num">${rp(t.sub)}</span></div>${t.diskon - (t.diskonPoin || 0) > 0 ? `<div><span class="muted">Diskon</span><span class="num">-${rp(t.diskon - (t.diskonPoin || 0))}</span></div>` : ''}${t.diskonPoin ? `<div><span class="muted">Tukar ${num(t.poinPakai)} poin</span><span class="num">-${rp(t.diskonPoin)}</span></div>` : ''}${t.poinDapat ? `<div><span class="muted">Poin didapat</span><span class="num">${num(t.poinDapat)}</span></div>` : ''}${t.pajak ? `<div><span class="muted">Pajak</span><span class="num">${rp(t.pajak)}</span></div>` : ''}<div class="tot"><span>Total</span><span class="num">${rp(t.total)}</span></div>
     ${t.metode === 'Tunai' ? `<div><span class="muted">Dibayar / kembali</span><span class="num">${rp(t.bayar)} / ${rp(t.kembali)}</span></div>` : ''}
     ${cost && !t.void ? `<div><span class="muted">Laba kotor</span><b class="num">${rp(A.laba)} (${pct(A.margin)})</b></div>` : ''}</div>
     ${t.void ? `<div class="note">Dibatalkan oleh ${esc(t.voidBy || '-')} · ${t.voidAt ? fmtT(t.voidAt) : ''}<br>Alasan: ${esc(t.voidAlasan || '-')}</div>` : ''}
@@ -1097,6 +1183,255 @@ async function doVoid(id, dk) {
   try { await DB.doc('sales/' + dk).update({ trx: { [id]: { void: true, voidBy: S.me.nama, voidAt: Date.now(), voidAlasan: alasan.trim() } } }); }
   catch (e) { return toast('Gagal membatalkan transaksi', 'err'); }
   closeModal(); toast('Transaksi dibatalkan');
+}
+/* ---------- MEJA, PELANGGAN, POIN ---------- */
+const mejaList = () => String(cfg().meja || '').split(',').map(s => s.trim()).filter(Boolean);
+const TIPE = ['Makan di tempat', 'Bawa pulang'];
+const mejaOf = t => t.tipe === 'Bawa pulang' ? 'Bawa pulang' : (t.meja || 'Tanpa meja');
+const custAll = () => Object.values(S.cust).filter(c => !c.del);
+function custStats() {
+  const m = {};
+  S.all.forEach(t => {
+    if (t.void || !t.pelanggan) return;
+    const o = m[t.pelanggan.id] || (m[t.pelanggan.id] = { n: 0, belanja: 0, last: 0, dapat: 0, pakai: 0 });
+    o.n++; o.belanja += t.total; o.last = Math.max(o.last, t.ts); o.dapat += t.poinDapat || 0; o.pakai += t.poinPakai || 0;
+  });
+  return m;
+}
+
+/* bagian "pesanan untuk" di keranjang kasir */
+function ordHTML() {
+  const t = totals(); const dine = S.pay.tipe !== 'Bawa pulang'; const ml = mejaList();
+  return `<div class="seg" id="tseg">${TIPE.map(x => `<button data-act="pos-tipe" data-v="${x}" class="${S.pay.tipe === x || (x === TIPE[0] && !S.pay.tipe) ? 'on' : ''}">${x}</button>`).join('')}</div>
+    ${dine && ml.length ? `<label class="f">Meja<select id="meja" data-in="meja"><option value="">Pilih meja</option>${ml.map(m => `<option ${S.pay.meja === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select></label>` : ''}
+    <div class="custrow"><button class="btn" data-act="cust-open">${ic('star')}${t.cu ? esc(t.cu.nama) : 'Pilih pelanggan (opsional)'}</button>${t.cu ? '<button class="btn sm" data-act="cust-clear">Lepas</button>' : ''}</div>
+    ${t.cu ? `<div class="ptbox"><div class="muted">Poin ${esc(t.cu.nama)}: <b>${num(t.avail)}</b>${+cfg().poinNilai > 0 ? ' · 1 poin = ' + rp(cfg().poinNilai) : ''}</div>
+      ${t.avail > 0 && +cfg().poinNilai > 0 ? `<label class="f">Tukar poin<input id="pakai" type="number" min="0" max="${t.avail}" inputmode="numeric" data-in="pakai" placeholder="0" value="${esc(S.pay.pakai)}"></label>` : ''}
+      <div class="muted" id="ptinfo"></div></div>` : ''}`;
+}
+function ordInfo() {
+  const e = $('#ptinfo'); if (!e) return; const t = totals();
+  e.textContent = (t.pakai ? 'Poin dipakai ' + num(t.pakai) + ' (potongan ' + rp(t.pd) + '). ' : '') + (t.dapat ? 'Poin yang akan didapat: ' + num(t.dapat) + '.' : '');
+}
+
+/* pilih pelanggan di kasir */
+function custOpen() {
+  openModal(`<div class="dh"><h2>Pilih pelanggan</h2><button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
+    <div class="db"><label class="search">${ic('search')}<input id="cq" type="text" data-in="cq" placeholder="Cari nama atau nomor HP" autocomplete="off"></label>
+    <div class="stack" id="cqList" style="gap:6px"></div>
+    <div class="sec"><h2 style="font:700 15px var(--display)">Pelanggan baru</h2>
+      <div class="cols2"><label class="f">Nama<input id="cn1" type="text" autocomplete="off"></label><label class="f">No. HP (opsional)<input id="cn2" type="tel" inputmode="tel" autocomplete="off"></label></div>
+      <button class="btn primary" data-act="cust-add" style="margin-top:8px">Tambah dan pilih</button></div></div>`);
+  custPickList();
+}
+function custPickList() {
+  const el = $('#cqList'); if (!el) return; const q = (($('#cq') || {}).value || '').trim().toLowerCase();
+  const list = custAll().filter(c => !q || c.nama.toLowerCase().includes(q) || String(c.telp || '').includes(q)).sort((a, b) => a.nama.localeCompare(b.nama)).slice(0, 30);
+  el.innerHTML = list.length ? list.map(c => `<button class="btn cl" data-act="cust-pick" data-id="${c.id}"><b>${esc(c.nama)}</b><small class="muted">${esc(c.telp || '')} · ${num(S.poin[c.id] || 0)} poin</small></button>`).join('')
+    : `<p class="muted">${S.custErr ? 'Data pelanggan belum bisa dibaca. Super Admin perlu menerbitkan aturan Firestore terbaru.' : 'Belum ada pelanggan yang cocok. Tambahkan di bawah.'}</p>`;
+}
+async function custAdd() {
+  const nama = $('#cn1').value.trim(), telp = $('#cn2').value.trim();
+  if (!nama) return toast('Isi nama pelanggan', 'err');
+  const id = uid(), o = { id, nama, telp, adj: 0, dibuat: Date.now() };
+  try { await upsert('master/customers', 'items', id, o); } catch (e) { return toast('Gagal menyimpan pelanggan. Pastikan aturan Firestore terbaru sudah diterbitkan.', 'err'); }
+  S.cust[id] = o; S.pay.cust = id; S.pay.pakai = ''; closeModal(); posCart();
+}
+
+/* halaman pelanggan & poin (Super Admin / Admin) */
+function customersView() {
+  return `<header class="ph"><div><h1>Pelanggan &amp; Poin</h1><p>Data pelanggan, riwayat belanja, dan saldo poin.</p></div>
+    <div class="row">${S.dl ? `<button class="btn" data-act="export-rep">${ic('download')}Unduh CSV</button>` : ''}<button class="btn primary" data-act="cust-new">${ic('plus')}Tambah pelanggan</button></div></header>
+    <label class="search" style="margin-bottom:12px">${ic('search')}<input id="cuq" type="text" data-in="cuq" placeholder="Cari nama atau nomor HP" value="${esc(S.ui.cuq)}" autocomplete="off"></label>
+    <div id="custBody"></div>`;
+}
+function custBody() {
+  const el = $('#custBody'); if (!el) return;
+  const st = custStats(); const q = S.ui.cuq.trim().toLowerCase(); const all = custAll();
+  const list = all.filter(c => !q || c.nama.toLowerCase().includes(q) || String(c.telp || '').includes(q)).sort((a, b) => ((st[b.id] || {}).belanja || 0) - ((st[a.id] || {}).belanja || 0));
+  const poinTotal = all.reduce((a, c) => a + Math.max(0, S.poin[c.id] || 0), 0); const nilai = +cfg().poinNilai || 0;
+  const tiles = `<div class="tiles" style="margin-bottom:12px"><div class="tile"><small>Pelanggan</small><b>${num(all.length)}</b></div>
+    <div class="tile"><small>Poin beredar</small><b>${num(poinTotal)}</b>${nilai ? `<div class="d">Setara ${rp(poinTotal * nilai)}</div>` : ''}</div>
+    <div class="tile"><small>Aturan poin</small><b style="font-size:16px">${+cfg().poinPer > 0 ? '1 poin / ' + rp(cfg().poinPer) : 'Nonaktif'}</b><div class="d">${nilai ? '1 poin = ' + rp(nilai) : ''}</div></div></div>`;
+  if (!list.length) { el.innerHTML = tiles + empty('Belum ada pelanggan', 'Tambahkan di sini atau langsung dari layar kasir.'); S.lastCsv = null; return; }
+  const rows = list.map(c => { const s = st[c.id] || { n: 0, belanja: 0, last: 0 }; return `<tr class="clk" data-act="cust-edit" data-id="${c.id}"><td><b>${esc(c.nama)}</b></td><td>${esc(c.telp || '-')}</td><td class="r num">${s.n}</td><td class="r num">${rp(s.belanja)}</td><td class="nw">${s.last ? fmtD(dKey(s.last)) : '-'}</td><td class="r num"><b>${num(S.poin[c.id] || 0)}</b></td></tr>`; });
+  el.innerHTML = tiles + tbl([['Nama'], ['No. HP'], ['Kunjungan', 'r'], ['Total belanja', 'r'], ['Terakhir'], ['Poin', 'r']], rows);
+  S.lastCsv = { name: 'pelanggan_' + TODAY + '.csv', rows: [['Nama', 'No HP', 'Kunjungan', 'Total belanja', 'Terakhir', 'Poin']].concat(list.map(c => { const s = st[c.id] || { n: 0, belanja: 0, last: 0 }; return [c.nama, c.telp || '', s.n, s.belanja, s.last ? dKey(s.last) : '', S.poin[c.id] || 0]; })) };
+}
+function custModal(id, confirming) {
+  const c = id ? S.cust[id] : null; const s = c ? (custStats()[id] || { n: 0, belanja: 0, dapat: 0, pakai: 0 }) : null;
+  openModal(`<div class="dh"><h2>${c ? 'Ubah pelanggan' : 'Tambah pelanggan'}</h2><button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
+    <div class="db"><label class="f">Nama<input id="cm-n" type="text" value="${c ? esc(c.nama) : ''}" autocomplete="off"></label>
+    <label class="f">No. HP / WhatsApp<input id="cm-t" type="tel" inputmode="tel" value="${c ? esc(c.telp || '') : ''}" autocomplete="off"></label>
+    ${c ? `<div class="tiles"><div class="tile"><small>Saldo poin</small><b>${num(S.poin[id] || 0)}</b></div><div class="tile"><small>Kunjungan</small><b>${s.n}</b></div><div class="tile"><small>Total belanja</small><b>${rp(s.belanja)}</b></div></div>
+    <p class="muted">Poin didapat ${num(s.dapat)}, dipakai ${num(s.pakai)}${+c.adj ? ', koreksi manual ' + (c.adj > 0 ? '+' : '') + num(c.adj) : ''}.</p>
+    <label class="f">Koreksi poin (tambah atau kurang)<span class="h">Contoh 20 untuk menambah, -10 untuk mengurangi.</span><input id="cm-a" type="number" inputmode="numeric" placeholder="0"></label>` : ''}
+    ${confirming ? '<div class="note">Pelanggan ini akan dihapus dari daftar. Riwayat transaksinya tetap ada. Tekan "Ya, hapus" untuk melanjutkan.</div>' : ''}</div>
+    <div class="df">${c ? (confirming ? `<button class="btn danger" data-act="cust-del-do" data-id="${id}">Ya, hapus</button>` : `<button class="btn danger" data-act="cust-del" data-id="${id}">Hapus</button>`) : ''}<button class="btn" data-act="close">Batal</button><button class="btn primary" data-act="cust-save" data-id="${id || ''}">Simpan</button></div>`);
+}
+async function saveCust(id) {
+  const nama = $('#cm-n').value.trim(), telp = $('#cm-t').value.trim(); if (!nama) return toast('Isi nama pelanggan', 'err');
+  const old = id ? S.cust[id] : null; const nid = id || uid(); const delta = Math.round(+($('#cm-a') || {}).value || 0);
+  const o = Object.assign({ adj: 0, dibuat: Date.now() }, old || {}, { id: nid, nama, telp, adj: (+(old && old.adj) || 0) + delta });
+  try { await upsert('master/customers', 'items', nid, o); } catch (e) { return toast('Gagal menyimpan pelanggan', 'err'); }
+  S.cust[nid] = o; closeModal(); toast('Pelanggan disimpan'); renderViewKeep();
+}
+async function delCust(id) {
+  const old = S.cust[id]; if (!old) return;
+  try { await upsert('master/customers', 'items', id, Object.assign({}, old, { del: true })); } catch (e) { return toast('Gagal menghapus pelanggan', 'err'); }
+  S.cust[id] = Object.assign({}, old, { del: true }); if (S.pay.cust === id) S.pay.cust = '';
+  closeModal(); toast('Pelanggan dihapus'); renderViewKeep();
+}
+
+/* ---------- laporan tambahan (bulanan): meja, kasir, pelanggan ---------- */
+function repMeja() {
+  const m = S.ui.month; const live = trxOfMonth(m).filter(t => !t.void);
+  if (!live.length) return empty('Belum ada penjualan', 'Tidak ada transaksi pada ' + fmtM(m) + '.');
+  const A = agg(live); const by = {};
+  live.forEach(t => { const k = mejaOf(t); (by[k] = by[k] || []).push(t); });
+  const dine = agg(live.filter(t => t.tipe !== 'Bawa pulang')), take = agg(live.filter(t => t.tipe === 'Bawa pulang'));
+  const list = Object.entries(by).map(([k, l]) => [k, agg(l)]).sort((a, b) => b[1].omzet - a[1].omzet);
+  const rows = list.map(([k, a]) => `<tr><td><b>${esc(k)}</b></td><td class="r num">${a.n}</td><td class="r num">${rp(a.omzet)}</td><td class="r num">${rp(a.laba)}</td><td class="r num">${rp(a.avg)}</td><td style="min-width:110px"><span class="bar"><i style="width:${A.omzet ? a.omzet / A.omzet * 100 : 0}%"></i></span><small>${pct(A.omzet ? a.omzet / A.omzet * 100 : 0)}</small></td></tr>`);
+  S.lastCsv = { name: 'meja_' + m + '.csv', rows: [['Meja / tipe', 'Transaksi', 'Penjualan', 'Laba', 'Rata-rata']].concat(list.map(([k, a]) => [k, a.n, Math.round(a.omzet), Math.round(a.laba), Math.round(a.avg)])) };
+  return `<div class="tiles"><div class="tile"><small>Makan di tempat</small><b>${rp(dine.omzet)}</b><div class="d">${dine.n} transaksi · rata-rata ${rp(dine.avg)}</div></div>
+    <div class="tile"><small>Bawa pulang</small><b>${rp(take.omzet)}</b><div class="d">${take.n} transaksi · rata-rata ${rp(take.avg)}</div></div></div>
+    <div class="sec"><h2>Penjualan per meja</h2>${tbl([['Meja'], ['Trx', 'r'], ['Penjualan', 'r'], ['Laba', 'r'], ['Rata-rata', 'r'], ['Kontribusi']], rows)}</div>`;
+}
+function repKasir() {
+  const m = S.ui.month; const all = trxOfMonth(m); const live = all.filter(t => !t.void);
+  if (!all.length) return empty('Belum ada penjualan', 'Tidak ada transaksi pada ' + fmtM(m) + '.');
+  const A = agg(live); const by = {};
+  all.forEach(t => { const k = t.kasirId || t.kasir; const o = by[k] || (by[k] = { nama: t.kasir, l: [], batal: 0, last: 0 }); o.nama = t.kasir; if (t.void) o.batal++; else o.l.push(t); o.last = Math.max(o.last, t.ts); });
+  const list = Object.values(by).map(o => Object.assign(o, { a: agg(o.l) })).sort((a, b) => b.a.omzet - a.a.omzet);
+  const rows = list.map(o => `<tr><td><b>${esc(o.nama)}</b></td><td class="r num">${o.a.n}</td><td class="r num">${rp(o.a.omzet)}</td><td class="r num">${rp(o.a.laba)}</td><td class="r num">${rp(o.a.avg)}</td><td class="r num">${o.batal}</td><td class="nw">${fmtD(dKey(o.last)).split(', ')[1] || ''}</td><td style="min-width:100px"><span class="bar"><i style="width:${A.omzet ? o.a.omzet / A.omzet * 100 : 0}%"></i></span></td></tr>`);
+  S.lastCsv = { name: 'kasir_' + m + '.csv', rows: [['Kasir', 'Transaksi', 'Penjualan', 'Laba', 'Rata-rata', 'Dibatalkan']].concat(list.map(o => [o.nama, o.a.n, Math.round(o.a.omzet), Math.round(o.a.laba), Math.round(o.a.avg), o.batal])) };
+  return `<div class="sec" style="margin-top:0"><h2>Kinerja per kasir</h2>${tbl([['Kasir'], ['Trx', 'r'], ['Penjualan', 'r'], ['Laba', 'r'], ['Rata-rata', 'r'], ['Batal', 'r'], ['Terakhir'], ['Kontribusi']], rows)}</div>`;
+}
+function repPlg() {
+  const m = S.ui.month; const live = trxOfMonth(m).filter(t => !t.void);
+  if (!live.length) return empty('Belum ada penjualan', 'Tidak ada transaksi pada ' + fmtM(m) + '.');
+  const A = agg(live); const mem = live.filter(t => t.pelanggan); const Am = agg(mem);
+  const dapat = mem.reduce((a, t) => a + (t.poinDapat || 0), 0), pakai = mem.reduce((a, t) => a + (t.poinPakai || 0), 0), nilai = mem.reduce((a, t) => a + (t.diskonPoin || 0), 0);
+  const by = {}; mem.forEach(t => { const o = by[t.pelanggan.id] || (by[t.pelanggan.id] = { id: t.pelanggan.id, nama: t.pelanggan.nama, l: [], dapat: 0, pakai: 0 }); o.nama = (S.cust[o.id] && S.cust[o.id].nama) || t.pelanggan.nama; o.l.push(t); o.dapat += t.poinDapat || 0; o.pakai += t.poinPakai || 0; });
+  const list = Object.values(by).map(o => Object.assign(o, { a: agg(o.l) })).sort((a, b) => b.a.omzet - a.a.omzet);
+  const rows = list.slice(0, 30).map((o, i) => `<tr><td class="num">${i + 1}</td><td><b>${esc(o.nama)}</b></td><td class="r num">${o.a.n}</td><td class="r num">${rp(o.a.omzet)}</td><td class="r num">${num(o.dapat)}</td><td class="r num">${num(o.pakai)}</td><td class="r num">${num(S.poin[o.id] || 0)}</td></tr>`);
+  S.lastCsv = { name: 'pelanggan_' + m + '.csv', rows: [['Pelanggan', 'Transaksi', 'Penjualan', 'Poin didapat', 'Poin dipakai', 'Saldo poin']].concat(list.map(o => [o.nama, o.a.n, Math.round(o.a.omzet), o.dapat, o.pakai, S.poin[o.id] || 0])) };
+  return `<div class="tiles"><div class="tile"><small>Transaksi member</small><b>${Am.n} dari ${A.n}</b><div class="d">${pct(A.n ? Am.n / A.n * 100 : 0)} dari semua transaksi</div></div>
+    <div class="tile"><small>Penjualan member</small><b>${rp(Am.omzet)}</b><div class="d">${pct(A.omzet ? Am.omzet / A.omzet * 100 : 0)} dari penjualan</div></div>
+    <div class="tile"><small>Poin dibagikan</small><b>${num(dapat)}</b></div>
+    <div class="tile"><small>Poin ditukar</small><b>${num(pakai)}</b><div class="d">Potongan ${rp(nilai)}</div></div></div>
+    ${list.length ? `<div class="sec"><h2>Pelanggan teratas</h2>${tbl([['#'], ['Pelanggan'], ['Trx', 'r'], ['Belanja', 'r'], ['Poin dapat', 'r'], ['Poin pakai', 'r'], ['Saldo', 'r']], rows)}</div>` : empty('Belum ada transaksi dengan pelanggan', 'Pilih pelanggan di layar kasir agar poin tercatat.')}`;
+}
+/* ---------- PANEL: BERANDA, HPP & MARGIN, PENGELUARAN ---------- */
+const EXKAT = ['Bahan baku', 'Gaji', 'Sewa', 'Listrik, air, gas', 'Transport', 'Perawatan', 'Pemasaran', 'Lain-lain'];
+const expItems = m => Object.values(S.exp[m] || {}).filter(e => e && !e.del);
+const expTotal = m => expItems(m).reduce((a, e) => a + (+e.nominal || 0), 0);
+const liveOf = l => l.filter(t => !t.void);
+const ceil500 = v => Math.ceil(v / 500) * 500;
+
+function homeView() {
+  const nav = NAV.filter(n => n[0] !== 'home' && can(n[0]));
+  return `<header class="ph"><div><h1>Beranda</h1><p>Halo ${esc(S.me.nama)}. Ringkasan ${esc(cfg().nama)} · ${fmtD(TODAY)}</p></div></header>
+    <div class="hub">${nav.map(n => `<button class="hubc" data-act="nav" data-r="${n[0]}"><span class="hi">${ic(n[2])}</span><b>${n[1]}</b><small>${n[3]}</small></button>`).join('')}</div>
+    <div id="homeBody"></div>`;
+}
+function homeBody() {
+  const el = $('#homeBody'); if (!el) return; const m = TODAY.slice(0, 7);
+  const day = agg(liveOf(trxOfDay(TODAY))), yes = agg(liveOf(trxOfDay(shiftD(TODAY, -1))));
+  const mon = agg(liveOf(trxOfMonth(m))), prev = agg(liveOf(trxOfMonth(shiftM(m, -1))));
+  const exp = expTotal(m), net = mon.laba - exp;
+  let out = `<div class="sec"><h2>Hari ini</h2><div class="tiles">
+    <div class="tile"><small>Penjualan hari ini</small><b>${rp(day.omzet)}</b>${yes.omzet > 0 ? `<div class="d">${delta(day.omzet, yes.omzet, 'kemarin')}</div>` : ''}</div>
+    <div class="tile"><small>Laba kotor</small><b>${rp(day.laba)}</b><div class="d">${pct(day.margin)} dari penjualan</div></div>
+    <div class="tile"><small>Transaksi</small><b>${num(day.n)}</b><div class="d">Rata-rata ${rp(day.avg)}</div></div>
+    <div class="tile"><small>Item terjual</small><b>${num(day.qty)}</b></div></div></div>
+    <div class="sec"><h2>${fmtM(m)}</h2><div class="tiles">
+    <div class="tile"><small>Penjualan bulan ini</small><b>${rp(mon.omzet)}</b>${prev.omzet > 0 ? `<div class="d">${delta(mon.omzet, prev.omzet, fmtM(shiftM(m, -1)))}</div>` : ''}</div>
+    <div class="tile"><small>HPP</small><b>${rp(mon.hpp)}</b><div class="d">${pct(mon.omzet > 0 ? mon.hpp / mon.omzet * 100 : 0)} dari penjualan</div></div>
+    <div class="tile"><small>Laba kotor</small><b>${rp(mon.laba)}</b><div class="d">${pct(mon.margin)} dari penjualan</div></div>
+    <div class="tile"><small>Pengeluaran</small><b>${rp(exp)}</b><div class="d">${S.expErr ? 'Belum bisa dibaca' : 'Dicatat di panel Pengeluaran'}</div></div>
+    <div class="tile"><small>Laba bersih</small><b class="${net < 0 ? 'dn' : ''}">${rp(net)}</b><div class="d">Laba kotor dikurangi pengeluaran</div></div></div></div>`;
+  const rows = []; for (let i = 6; i >= 0; i--) { const dk = shiftD(TODAY, -i); const a = agg(liveOf(trxOfDay(dk))); rows.push({ l: dk.slice(8), omzet: a.omzet, hpp: a.hpp, tip: tipOf(fmtD(dk), a) }); }
+  out += `<div class="sec"><h2>7 hari terakhir</h2>${stackChart(rows, 'Penjualan 7 hari terakhir')}</div>`;
+  const top = itemAgg(liveOf(trxOfMonth(m))).sort((a, b) => b.net - a.net).slice(0, 5);
+  const mg = prods(true).filter(p => p.harga > 0).map(p => ({ p, m: (p.harga - hppOf(p)) / p.harga * 100 })).sort((a, b) => a.m - b.m);
+  const tg = +cfg().target || 60; const lowM = mg.filter(x => x.m < tg).slice(0, 5);
+  const lowS = prods(true).filter(p => p.track && (S.stock[p.id] || 0) <= (+p.stokMin || 5)).sort((a, b) => (S.stock[a.id] || 0) - (S.stock[b.id] || 0)).slice(0, 6);
+  out += `<div class="cols2" style="margin-top:16px;align-items:start">
+    <div class="panel"><h2 style="font:700 16px var(--display);margin-bottom:8px">Menu terlaris bulan ini</h2>${top.length ? tbl([['Menu'], ['Qty', 'r'], ['Penjualan', 'r']], top.map(i => `<tr><td>${esc(i.nama)}</td><td class="r num">${num(i.qty)}</td><td class="r num">${rp(i.net)}</td></tr>`)) : '<p class="muted">Belum ada penjualan bulan ini.</p>'}</div>
+    <div class="panel"><h2 style="font:700 16px var(--display);margin-bottom:8px">Perlu perhatian</h2>
+      ${lowS.length ? `<p class="muted" style="margin-bottom:4px">Stok menipis</p>${lowS.map(p => `<div class="row" style="justify-content:space-between;padding:4px 0"><span>${esc(p.nama)}</span><span class="tag ${(S.stock[p.id] || 0) <= 0 ? 'bad' : ''}">${(S.stock[p.id] || 0) <= 0 ? 'Habis' : 'Sisa ' + num(S.stock[p.id])}</span></div>`).join('')}` : '<p class="muted">Tidak ada stok yang menipis.</p>'}
+      ${lowM.length ? `<p class="muted" style="margin:10px 0 4px">Margin di bawah target ${num(tg)}%</p>${lowM.map(x => `<div class="row" style="justify-content:space-between;padding:4px 0"><span>${esc(x.p.nama)}</span><span class="tag bad">${pct(x.m)}</span></div>`).join('')}` : ''}</div></div>`;
+  const rec = S.all.slice(0, 6);
+  out += `<div class="sec"><h2>Transaksi terbaru</h2>${rec.length ? tbl([['No.'], ['Waktu'], ['Kasir'], ['Meja'], ['Total', 'r']], rec.map(t => `<tr class="clk ${t.void ? 'void' : ''}" data-act="sale-open" data-id="${t.id}" data-d="${dKey(t.ts)}"><td class="nw"><b>${esc(t.no)}</b></td><td class="nw">${fmtT(t.ts)}</td><td>${esc(t.kasir)}</td><td>${esc(t.tipe === 'Bawa pulang' ? 'Bawa pulang' : (t.meja || '-'))}</td><td class="r num nw">${rp(t.total)}</td></tr>`)) : empty('Belum ada transaksi', 'Transaksi dari panel Kasir akan muncul di sini.')}</div>`;
+  el.innerHTML = out;
+}
+
+/* ---- HPP & margin ---- */
+function hppView() {
+  const tabs = [['margin', 'Margin terendah'], ['hpp', 'HPP tertinggi'], ['laris', 'Terlaris'], ['laba', 'Laba bulan ini']];
+  return `<header class="ph"><div><h1>HPP &amp; Margin</h1><p>Analisis modal, margin, dan saran harga tiap produk. Untuk mengubah resep atau harga, ketuk produknya.</p></div>${S.dl ? `<button class="btn" data-act="export-rep">${ic('download')}Unduh CSV</button>` : ''}</header>
+    <div class="seg" style="margin-bottom:14px">${tabs.map(t => `<button class="${S.ui.hs === t[0] ? 'on' : ''}" data-act="hpp-sort" data-v="${t[0]}">${t[1]}</button>`).join('')}</div>
+    <div id="hppBody"></div>`;
+}
+function hppBody() {
+  const el = $('#hppBody'); if (!el) return; const m = TODAY.slice(0, 7); const tg = +cfg().target || 60;
+  const sold = {}; itemAgg(liveOf(trxOfMonth(m))).forEach(i => { sold[i.pid] = i; });
+  const list = prods(true).map(p => { const h = hppOf(p), mg = p.harga > 0 ? (p.harga - h) / p.harga * 100 : 0; const s = sold[p.id] || { qty: 0, laba: 0 }; return { p, h, mg, hp: p.harga > 0 ? h / p.harga * 100 : 0, qty: s.qty, laba: s.laba, sug: h > 0 ? ceil500(h / (1 - tg / 100)) : 0 }; });
+  if (!list.length) { el.innerHTML = empty('Belum ada produk', 'Tambahkan produk di panel Produk & Bahan.'); S.lastCsv = null; return; }
+  const k = S.ui.hs; list.sort((a, b) => k === 'hpp' ? b.h - a.h : k === 'laris' ? b.qty - a.qty : k === 'laba' ? b.laba - a.laba : a.mg - b.mg);
+  const avg = list.reduce((a, x) => a + x.mg, 0) / list.length, below = list.filter(x => x.mg < tg).length, none = list.filter(x => x.h <= 0).length;
+  const tiles = `<div class="tiles" style="margin-bottom:12px"><div class="tile"><small>Produk aktif</small><b>${list.length}</b></div>
+    <div class="tile"><small>Rata-rata margin</small><b>${pct(avg)}</b><div class="d">Target ${num(tg)}%</div></div>
+    <div class="tile"><small>Di bawah target</small><b class="${below ? 'dn' : ''}">${below}</b><div class="d">produk</div></div>
+    <div class="tile"><small>HPP belum diisi</small><b class="${none ? 'dn' : ''}">${none}</b><div class="d">produk</div></div></div>`;
+  const rows = list.map(x => `<tr class="clk" data-act="prod-edit" data-id="${x.p.id}"><td style="width:56px"><img class="th" alt="" src="${prodSrc(x.p)}"></td><td><b>${esc(x.p.nama)}</b><span class="sub">${esc(x.p.kategori || '')}</span></td><td class="r num">${rp(x.p.harga)}</td><td class="r num">${rp(x.h)}</td><td class="r num">${pct(x.hp)}</td><td class="r num">${rp(x.p.harga - x.h)}</td><td class="r num"><span class="tag ${x.h <= 0 ? '' : x.mg < tg ? 'bad' : 'ok'}">${x.h <= 0 ? 'HPP kosong' : pct(x.mg)}</span></td><td class="r num">${x.h > 0 && x.mg < tg ? rp(x.sug) : '-'}</td><td class="r num">${num(x.qty)}</td><td class="r num">${rp(x.laba)}</td></tr>`);
+  el.innerHTML = tiles + tbl([[''], ['Produk'], ['Harga', 'r'], ['HPP', 'r'], ['HPP %', 'r'], ['Laba/unit', 'r'], ['Margin', 'r'], ['Saran harga', 'r'], ['Terjual bln ini', 'r'], ['Laba bln ini', 'r']], rows)
+    + `<p class="muted" style="margin-top:8px">Saran harga adalah harga minimum agar margin mencapai target ${num(tg)}% (bisa diubah di Pengaturan), dibulatkan ke Rp500.</p>`;
+  S.lastCsv = { name: 'hpp_margin_' + TODAY + '.csv', rows: [['Produk', 'Kategori', 'Harga', 'HPP', 'HPP %', 'Laba per unit', 'Margin %', 'Saran harga', 'Terjual bulan ini', 'Laba bulan ini']].concat(list.map(x => [x.p.nama, x.p.kategori || '', x.p.harga, Math.round(x.h), x.hp.toFixed(1), Math.round(x.p.harga - x.h), x.mg.toFixed(1), x.h > 0 && x.mg < tg ? x.sug : '', x.qty, Math.round(x.laba)])) };
+}
+
+/* ---- pengeluaran & laba rugi ---- */
+function expensesView() {
+  return `<header class="ph"><div><h1>Pengeluaran &amp; Laba</h1><p>Catat biaya usaha supaya laba bersih terlihat. Laba bersih = laba kotor dikurangi pengeluaran.</p></div>
+    <div class="row">${S.dl ? `<button class="btn" data-act="export-rep">${ic('download')}Unduh CSV</button>` : ''}<button class="btn primary" data-act="ex-new">${ic('plus')}Catat pengeluaran</button></div></header>
+    <div class="pick"><button class="btn sm" data-act="ex-prev" aria-label="Bulan sebelumnya">${ic('l')}</button><span class="lbl">${fmtM(S.ui.exm)}</span><button class="btn sm" data-act="ex-next" aria-label="Bulan berikutnya">${ic('r')}</button><button class="btn sm" data-act="ex-now">Bulan ini</button></div>
+    <div id="expBody"></div>`;
+}
+function expBody() {
+  const el = $('#expBody'); if (!el) return; const m = S.ui.exm;
+  const A = agg(liveOf(trxOfMonth(m))); const items = expItems(m).sort((a, b) => (b.tgl || '').localeCompare(a.tgl || '') || (b.ts || 0) - (a.ts || 0));
+  const tot = items.reduce((a, e) => a + (+e.nominal || 0), 0); const net = A.laba - tot;
+  const tiles = `<div class="tiles"><div class="tile"><small>Penjualan bersih</small><b>${rp(A.omzet)}</b></div><div class="tile"><small>HPP</small><b>${rp(A.hpp)}</b></div>
+    <div class="tile"><small>Laba kotor</small><b>${rp(A.laba)}</b><div class="d">${pct(A.margin)}</div></div><div class="tile"><small>Pengeluaran</small><b>${rp(tot)}</b></div>
+    <div class="tile"><small>Laba bersih</small><b class="${net < 0 ? 'dn' : ''}">${rp(net)}</b><div class="d">${pct(A.omzet > 0 ? net / A.omzet * 100 : 0)} dari penjualan</div></div></div>`;
+  const by = {}; items.forEach(e => { by[e.kat] = (by[e.kat] || 0) + (+e.nominal || 0); });
+  const cats = Object.entries(by).sort((a, b) => b[1] - a[1]);
+  const catHTML = cats.length ? `<div class="sec"><h2>Per kategori</h2><div class="panel">${cats.map(([k, v]) => `<div class="hb"><span>${esc(k)}</span><span class="bar"><i style="width:${tot ? v / tot * 100 : 0}%"></i></span><span class="num">${rp(v)} <small>${pct(tot ? v / tot * 100 : 0)}</small></span></div>`).join('')}</div></div>` : '';
+  const rows = items.map(e => `<tr><td class="nw">${fmtD(e.tgl).split(', ')[1] || e.tgl}</td><td>${esc(e.kat)}</td><td>${esc(e.cat || '-')}</td><td class="r num">${rp(e.nominal)}</td><td class="r"><button class="btn sm danger" data-act="ex-del" data-id="${e.id}" data-m="${m}" aria-label="Hapus">${ic('trash')}</button></td></tr>`);
+  el.innerHTML = (S.expErr ? '<div class="note" style="margin-bottom:12px">Data pengeluaran belum bisa dibaca atau disimpan. Terbitkan aturan Firestore terbaru dulu.</div>' : '') + tiles + catHTML
+    + `<div class="sec"><h2>Daftar pengeluaran ${fmtM(m)}</h2>${items.length ? tbl([['Tanggal'], ['Kategori'], ['Catatan'], ['Nominal', 'r'], ['', 'r']], rows) : empty('Belum ada pengeluaran', 'Ketuk "Catat pengeluaran" untuk menambah.')}</div>`;
+  S.lastCsv = { name: 'pengeluaran_' + m + '.csv', rows: [['Tanggal', 'Kategori', 'Catatan', 'Nominal', 'Dicatat oleh']].concat(items.map(e => [e.tgl, e.kat, e.cat || '', e.nominal, e.by || ''])) };
+}
+function expModal() {
+  const d0 = S.ui.exm === TODAY.slice(0, 7) ? TODAY : S.ui.exm + '-01';
+  openModal(`<div class="dh"><h2>Catat pengeluaran</h2><button class="icon" data-act="close" aria-label="Tutup">${ic('x')}</button></div>
+    <div class="db"><div class="cols2"><label class="f">Tanggal<input id="ex-d" type="date" value="${d0}"></label><label class="f">Kategori<select id="ex-k">${EXKAT.map(k => `<option>${k}</option>`).join('')}</select></label></div>
+    <label class="f">Nominal (Rp)<input id="ex-n" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+    <label class="f">Catatan (opsional)<input id="ex-c" type="text" placeholder="Contoh: belanja sayur pasar" autocomplete="off"></label></div>
+    <div class="df"><button class="btn" data-act="close">Batal</button><button class="btn primary" data-act="ex-save">Simpan</button></div>`);
+}
+async function saveExp() {
+  const tgl = $('#ex-d').value, kat = $('#ex-k').value, nominal = Math.round(+$('#ex-n').value || 0), cat = $('#ex-c').value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(tgl)) return toast('Pilih tanggal', 'err'); if (nominal <= 0) return toast('Isi nominal pengeluaran', 'err');
+  const id = uid(), m = tgl.slice(0, 7), o = { id, tgl, kat, nominal, cat, by: S.me.nama, ts: Date.now() };
+  try { await upsert('exp/' + m, 'items', id, o); } catch (e) { return toast('Gagal menyimpan. Pastikan aturan Firestore terbaru sudah diterbitkan.', 'err'); }
+  S.exp[m] = Object.assign({}, S.exp[m], { [id]: o }); S.ui.exm = m; closeModal(); toast('Pengeluaran dicatat'); renderViewKeep();
+}
+async function delExp(id, m) {
+  const o = (S.exp[m] || {})[id]; if (!o) return;
+  try { await upsert('exp/' + m, 'items', id, Object.assign({}, o, { del: true })); } catch (e) { return toast('Gagal menghapus', 'err'); }
+  S.exp[m] = Object.assign({}, S.exp[m], { [id]: Object.assign({}, o, { del: true }) }); toast('Pengeluaran dihapus'); renderViewKeep();
 }
 /* ---------- LAPORAN ---------- */
 function niceMax(v) { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
@@ -1137,7 +1472,7 @@ function tilesHTML(A, extra) {
     <div class="tile"><small>Item terjual</small><b>${num(A.qty)}</b></div></div>`;
 }
 function reportView() {
-  const u = S.ui; const tabs = [['harian', 'Harian'], ['bulanan', 'Bulanan'], ['itemd', 'Item per hari'], ['itemm', 'Item per bulan']];
+  const u = S.ui; const tabs = [['harian', 'Harian'], ['bulanan', 'Bulanan'], ['itemd', 'Item per hari'], ['itemm', 'Item per bulan'], ['meja', 'Per meja'], ['kasir', 'Per kasir'], ['plg', 'Pelanggan']];
   const daily = u.rep === 'harian' || u.rep === 'itemd';
   return `<header class="ph"><div><h1>Laporan</h1><p>Penjualan, HPP, dan laba kotor. Transaksi batal tidak dihitung.</p></div>${S.dl ? `<button class="btn" data-act="export-rep">${ic('download')}Unduh CSV</button>` : ''}</header>
     <div class="seg">${tabs.map(t => `<button class="${u.rep === t[0] ? 'on' : ''}" data-act="rep-tab" data-t="${t[0]}">${t[1]}</button>`).join('')}</div>
@@ -1149,7 +1484,7 @@ function reportView() {
 function repBody() {
   const el = $('#repBody'); if (!el) return;
   const r = S.ui.rep; S.lastCsv = null;
-  el.innerHTML = r === 'harian' ? repHarian() : r === 'bulanan' ? repBulanan() : r === 'itemd' ? repItem(true) : repItemM();
+  el.innerHTML = r === 'harian' ? repHarian() : r === 'bulanan' ? repBulanan() : r === 'itemd' ? repItem(true) : r === 'itemm' ? repItemM() : r === 'meja' ? repMeja() : r === 'kasir' ? repKasir() : repPlg();
 }
 function repHarian() {
   const dk = S.ui.date; const all = trxOfDay(dk); const live = all.filter(t => !t.void); const A = agg(live);
@@ -1241,7 +1576,7 @@ function marginTag(mg) {
 }
 function productsView() {
   const tabs = [['produk', 'Produk'], ['bahan', 'Bahan baku']];
-  return `<header class="ph"><div><h1>Produk &amp; HPP</h1><p>HPP dihitung dari resep bahan baku atau diisi manual. Harga bahan yang berubah ikut memperbarui HPP.</p></div>
+  return `<header class="ph"><div><h1>Produk &amp; Bahan</h1><p>HPP dihitung dari resep bahan baku atau diisi manual. Harga bahan yang berubah ikut memperbarui HPP.</p></div>
     <button class="btn primary" data-act="${S.prodTab === 'produk' ? 'prod-new' : 'bahan-new'}">${ic('plus')}${S.prodTab === 'produk' ? 'Tambah produk' : 'Tambah bahan'}</button></header>
     <div class="seg" style="margin-bottom:14px">${tabs.map(t => `<button class="${S.prodTab === t[0] ? 'on' : ''}" data-act="prod-tab" data-t="${t[0]}">${t[1]}</button>`).join('')}</div>
     <div id="prodBody"></div>`;
@@ -1340,12 +1675,17 @@ async function delBahan(id) {
 }
 
 /* ---------- PENGGUNA (super admin) ---------- */
+function userStat(id) {
+  const m = TODAY.slice(0, 7); const o = { n: 0, omzet: 0, last: 0 };
+  S.all.forEach(t => { if (t.kasirId !== id) return; o.last = Math.max(o.last, t.ts); if (t.void || !dKey(t.ts).startsWith(m)) return; o.n++; o.omzet += t.sub - t.diskon; });
+  return o;
+}
 function usersView() {
   const us = Object.values(S.users).sort((a, b) => a.nama.localeCompare(b.nama));
   const ok = '<span class="tag ok">Bisa</span>', no = '<span class="tag">Tidak</span>';
   const perm = [['Transaksi di kasir', 1, 1, 1], ['Lihat data penjualan sendiri', 1, 1, 1], ['Lihat semua penjualan, laba, dan HPP', 0, 1, 1], ['Batalkan transaksi', 0, 1, 1], ['Laporan harian, bulanan, per item', 0, 1, 1], ['Kelola produk, bahan, dan resep HPP', 0, 1, 1], ['Kelola pengguna dan akun', 0, 0, 1], ['Pengaturan usaha dan data', 0, 0, 1]];
   return `<header class="ph"><div><h1>Pengguna</h1><p>Hanya Super Admin yang bisa mengelola akun dan hak akses.</p></div><button class="btn primary" data-act="user-new">${ic('plus')}Tambah pengguna</button></header>
-    ${tbl([['Nama'], ['Email'], ['Peran'], ['Status'], ['', 'r']], us.map(u => `<tr><td><span class="row" style="flex-wrap:nowrap"><span class="av">${esc(ini(u.nama))}</span><b>${esc(u.nama)}</b>${S.me && u.id === S.me.id ? '<span class="tag">Anda</span>' : ''}</span></td><td>${esc(u.email || '-')}</td><td>${ROLE[u.role]}</td><td>${u.aktif ? '<span class="tag ok">Aktif</span>' : '<span class="tag bad">Nonaktif</span>'}</td><td class="r"><button class="btn sm" data-act="user-edit" data-id="${u.id}">${ic('edit')}Ubah</button></td></tr>`))}
+    ${tbl([['Nama'], ['Email'], ['Peran'], ['Status'], ['Trx bulan ini', 'r'], ['Penjualan bulan ini', 'r'], ['Transaksi terakhir'], ['', 'r']], us.map(u => { const st = userStat(u.id); return `<tr><td><span class="row" style="flex-wrap:nowrap"><span class="av">${esc(ini(u.nama))}</span><b>${esc(u.nama)}</b>${S.me && u.id === S.me.id ? '<span class="tag">Anda</span>' : ''}</span></td><td>${esc(u.email || '-')}</td><td>${ROLE[u.role]}</td><td>${u.aktif ? '<span class="tag ok">Aktif</span>' : '<span class="tag bad">Nonaktif</span>'}</td><td class="r num">${st.n}</td><td class="r num">${rp(st.omzet)}</td><td class="nw">${st.last ? fmtD(dKey(st.last)).split(', ')[1] + ' ' + fmtT(st.last) : '-'}</td><td class="r"><button class="btn sm" data-act="user-edit" data-id="${u.id}">${ic('edit')}Ubah</button></td></tr>`; }))}
     <div class="sec"><h2>Hak akses per peran</h2>${tbl([['Fitur'], ['Kasir'], ['Admin'], ['Super Admin']], perm.map(r => `<tr><td>${r[0]}</td><td>${r[1] ? ok : no}</td><td>${r[2] ? ok : no}</td><td>${r[3] ? ok : no}</td></tr>`))}</div>`;
 }
 function userModal(id) {
@@ -1446,6 +1786,11 @@ function settingsView() {
       <label class="f">Lebar kertas struk<span class="h">Sesuai printer thermal.</span><select id="cs-kertas"><option value="58" ${+c.kertas === 58 ? 'selected' : ''}>58 mm</option><option value="80" ${+c.kertas === 80 ? 'selected' : ''}>80 mm</option></select></label></div>
       <label class="f">Catatan kaki struk<input id="cs-footer" type="text" value="${esc(c.footer)}"></label>
       <div><button class="btn primary" data-act="set-save">Simpan pengaturan</button></div></div>
+    <div class="sec panel stack" style="max-width:720px"><h2 style="font:700 16px var(--display)">Meja &amp; poin pelanggan</h2>
+      <label class="f">Daftar meja<span class="h">Pisahkan dengan koma. Contoh: Meja 1, Meja 2, Teras 1, VIP.</span><input id="cs-meja" type="text" value="${esc(c.meja)}"></label>
+      <div class="cols2"><label class="f">Belanja per 1 poin (Rp)<span class="h">Contoh 10000: tiap Rp10.000 dapat 1 poin. Isi 0 untuk mematikan poin.</span><input id="cs-poinper" type="number" min="0" inputmode="numeric" value="${esc(c.poinPer)}"></label>
+      <label class="f">Nilai 1 poin saat ditukar (Rp)<span class="h">Contoh 100: 1 poin menjadi potongan Rp100.</span><input id="cs-poinnilai" type="number" min="0" inputmode="numeric" value="${esc(c.poinNilai)}"></label></div>
+      <div><button class="btn primary" data-act="set-save">Simpan pengaturan</button></div></div>
     <div class="sec panel stack" style="max-width:720px"><h2 style="font:700 16px var(--display)">Data</h2>
       <p class="muted">Penyimpanan saat ini: <b>cloud (Firebase), dibagi ke semua perangkat yang masuk dengan akun</b>.</p>
       <div class="row">${S.dl ? `<button class="btn" data-act="backup">${ic('download')}Unduh cadangan (JSON)</button>` : ''}<button class="btn" data-act="demo-load">Tambah data contoh</button></div>
@@ -1457,7 +1802,7 @@ async function patchSettings(o) {
   return true;
 }
 async function saveSettings() {
-  const o = { nama: $('#cs-nama').value.trim() || 'Kasirku', tagline: $('#cs-tagline').value.trim(), jalan: $('#cs-jalan').value.trim(), kota: $('#cs-kota').value.trim(), telp: $('#cs-telp').value.trim(), pajak: Math.max(0, +$('#cs-pajak').value || 0), target: Math.min(95, Math.max(1, +$('#cs-target').value || 60)), kertas: +$('#cs-kertas').value === 80 ? 80 : 58, footer: $('#cs-footer').value.trim() };
+  const o = { nama: $('#cs-nama').value.trim() || 'Kasirku', tagline: $('#cs-tagline').value.trim(), jalan: $('#cs-jalan').value.trim(), kota: $('#cs-kota').value.trim(), telp: $('#cs-telp').value.trim(), pajak: Math.max(0, +$('#cs-pajak').value || 0), target: Math.min(95, Math.max(1, +$('#cs-target').value || 60)), kertas: +$('#cs-kertas').value === 80 ? 80 : 58, footer: $('#cs-footer').value.trim(), meja: $('#cs-meja').value.split(',').map(s => s.trim()).filter(Boolean).join(', '), poinPer: Math.max(0, Math.round(+$('#cs-poinper').value || 0)), poinNilai: Math.max(0, Math.round(+$('#cs-poinnilai').value || 0)) };
   if (await patchSettings(o)) { toast('Pengaturan disimpan'); renderShell(); }
 }
 function wipeModal(w) {
@@ -1493,6 +1838,23 @@ const H = {
   'pos-metode': el => { S.pay.metode = el.dataset.m; posCart(); },
   'pos-quick': el => { S.pay.bayar = el.dataset.v; $('#bayar').value = el.dataset.v; posSum(); },
   'pos-pay': () => doPay(),
+  'hpp-sort': el => { S.ui.hs = el.dataset.v; renderViewKeep(); },
+  'ex-prev': () => { S.ui.exm = shiftM(S.ui.exm, -1); renderViewKeep(); },
+  'ex-next': () => { S.ui.exm = shiftM(S.ui.exm, 1); renderViewKeep(); },
+  'ex-now': () => { S.ui.exm = TODAY.slice(0, 7); renderViewKeep(); },
+  'ex-new': () => expModal(),
+  'ex-save': () => saveExp(),
+  'ex-del': el => delExp(el.dataset.id, el.dataset.m),
+  'pos-tipe': el => { S.pay.tipe = el.dataset.v; if (el.dataset.v === 'Bawa pulang') S.pay.meja = ''; const o = $('#ord'); if (o) o.innerHTML = ordHTML(); },
+  'cust-open': () => custOpen(),
+  'cust-clear': () => { S.pay.cust = ''; S.pay.pakai = ''; posCart(); },
+  'cust-pick': el => { S.pay.cust = el.dataset.id; S.pay.pakai = ''; closeModal(); posCart(); },
+  'cust-add': () => custAdd(),
+  'cust-new': () => custModal(''),
+  'cust-edit': el => custModal(el.dataset.id),
+  'cust-save': el => saveCust(el.dataset.id),
+  'cust-del': el => custModal(el.dataset.id, true),
+  'cust-del-do': el => delCust(el.dataset.id),
   'pos-bill': () => showBill(),
   'copy-receipt': () => {
     const t = S.rcTrx || S.lastTrx; if (!t) return;
@@ -1563,7 +1925,7 @@ const H = {
   'set-save': () => saveSettings(),
   backup: async () => {
     const users = {}; Object.values(S.users).forEach(u => { users[u.id] = { id: u.id, nama: u.nama, role: u.role, aktif: u.aktif }; });
-    const data = JSON.stringify({ dibuat: new Date().toISOString(), pengaturan: S.settings, pengguna: users, produk: S.products, bahan: S.bahan, penjualan: S.days }, null, 1);
+    const data = JSON.stringify({ dibuat: new Date().toISOString(), pengaturan: S.settings, pengguna: users, produk: S.products, bahan: S.bahan, pelanggan: S.cust, penjualan: S.days }, null, 1);
     try { await S.dl.save({ filename: 'kasirku-cadangan-' + TODAY + '.json', data }); } catch (e) { if (!e || e.code !== 'declined') toast('Gagal mengunduh cadangan', 'err'); }
   },
   'demo-load': async () => {
@@ -1589,6 +1951,11 @@ function onIn(el) {
     case 'sf': u.sf = v || TODAY; salesBody(); break;
     case 'st': u.st = v || TODAY; salesBody(); break;
     case 'sm': u.sm = v; salesBody(); break;
+    case 'sj': u.sj = v; salesBody(); break;
+    case 'meja': S.pay.meja = v; break;
+    case 'pakai': S.pay.pakai = v; posSum(); break;
+    case 'cq': custPickList(); break;
+    case 'cuq': u.cuq = v; custBody(); break;
     case 'sk': u.sk = v; salesBody(); break;
     case 'ss': u.ss = v; salesBody(); break;
     case 'sq': u.sq = v; salesBody(); break;
@@ -1636,6 +2003,7 @@ function refresh() {
     derive(); checkData(); if (S.busy) return;
     if (!S.me || !S.dataReady || !$('#view')) { render(); return; }
     if (S.route === 'pos') { posGrid(); posCart(); return; }
+    if (!can(S.route)) { renderShell(); return; }
     if (!$('#modal').firstChild) renderViewKeep();
   });
 }
@@ -1644,6 +2012,8 @@ function bindPrivate() {
   const ok = k => { S.loaded[k] = 1; };
   const bad = k => () => { S.loaded[k] = 1; toast('Sebagian data tidak bisa dibaca. Periksa aturan keamanan Firestore.', 'err'); refresh(); };
   unsubs.push(DB.doc('master/products').onSnapshot(s => { S.products = (s.data() || {}).items || {}; ok('p'); refresh(); }, bad('p')));
+  unsubs.push(DB.doc('master/customers').onSnapshot(s => { S.cust = (s.data() || {}).items || {}; S.custErr = false; refresh(); }, () => { S.custErr = true; refresh(); }));
+  if (S.own && S.own.role !== 'kasir') unsubs.push(DB.collection('exp').onSnapshot(q => { const m = {}; q.docs.forEach(x => { m[x.id] = (x.data() || {}).items || {}; }); S.exp = m; S.expErr = false; refresh(); }, () => { S.expErr = true; refresh(); }));
   unsubs.push(DB.doc('master/bahan').onSnapshot(s => { S.bahan = (s.data() || {}).items || {}; ok('b'); refresh(); }, bad('b')));
   unsubs.push(DB.collection('profiles').onSnapshot(q => { const m = {}; q.docs.forEach(x => { const d = x.data(); if (d) m[x.id] = d; }); S.users = m; ok('u'); refresh(); }, bad('u')));
   unsubs.push(DB.collection('sales').onSnapshot(q => { const d = {}; q.docs.forEach(x => { d[x.id] = (x.data() || {}).trx || {}; }); S.days = d; ok('s'); refresh(); }, bad('s')));
